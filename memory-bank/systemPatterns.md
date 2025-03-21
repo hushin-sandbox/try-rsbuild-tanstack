@@ -163,6 +163,441 @@ TanStackRouterRspack({
 
 ## コンポーネントパターン
 
+### フォーム基盤パターン
+
+```typescript
+import { createFormHookContexts, createFormHook } from "@tanstack/react-form";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { object, string, minLength, maxLength } from "valibot";
+
+// 1. フォーム・フィールドコンテキストの作成
+const { fieldContext, formContext } = createFormHookContexts();
+
+// 2. 共通バリデータの定義
+const commonValidators = {
+  required: (fieldName: string) => ({ value }: { value: string }) =>
+    !value ? `${fieldName}は必須です` : undefined,
+  maxLength: (fieldName: string, max: number) => ({ value }: { value: string }) =>
+    value.length > max ? `${fieldName}は${max}文字以内で入力してください` : undefined,
+};
+
+// 3. アプリケーション全体で使用するフォームフックの作成
+export const { useAppForm } = createFormHook({
+  // 共通フィールドコンポーネント
+  fieldComponents: {
+    // テキストフィールド
+    TextField: ({ field, label, error, ...props }) => (
+      <div className="form-field">
+        <label htmlFor={field.name}>{label}</label>
+        <Input
+          id={field.name}
+          value={field.state.value}
+          onBlur={field.handleBlur}
+          onChange={(e) => field.handleChange(e.target.value)}
+          error={error || field.state.meta.errors?.[0]}
+          {...props}
+        />
+        {field.state.meta.errors && (
+          <div className="error">{field.state.meta.errors.join(", ")}</div>
+        )}
+      </div>
+    ),
+    // 数値フィールド
+    NumberField: ({ field, label, error, ...props }) => (
+      <div className="form-field">
+        <label htmlFor={field.name}>{label}</label>
+        <Input
+          id={field.name}
+          type="number"
+          value={field.state.value}
+          onBlur={field.handleBlur}
+          onChange={(e) => field.handleChange(Number(e.target.value))}
+          error={error || field.state.meta.errors?.[0]}
+          {...props}
+        />
+        {field.state.meta.errors && (
+          <div className="error">{field.state.meta.errors.join(", ")}</div>
+        )}
+      </div>
+    ),
+  },
+  // 共通フォームコンポーネント
+  formComponents: {
+    SubmitButton: ({ form, children }) => (
+      <form.Subscribe
+        selector={(state) => [state.canSubmit, state.isSubmitting]}
+        children={([canSubmit, isSubmitting]) => (
+          <Button type="submit" disabled={!canSubmit}>
+            {isSubmitting ? "送信中..." : children}
+          </Button>
+        )}
+      />
+    ),
+  },
+  fieldContext,
+  formContext,
+});
+
+// 4. フォームコンポーネントの基本実装
+export type BaseFormProps<T> = {
+  onSubmit: (values: T) => Promise<void>;
+  defaultValues?: Partial<T>;
+  children: React.ReactNode;
+};
+
+export function BaseForm<T>({ onSubmit, defaultValues, children }: BaseFormProps<T>) {
+  const form = useAppForm({
+    defaultValues: defaultValues as T,
+    onSubmit: async ({ value }) => {
+      await onSubmit(value);
+    },
+  });
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        void form.handleSubmit();
+      }}
+    >
+      {children}
+    </form>
+  );
+}
+```
+
+### フィールドコンポーネントパターン
+
+```typescript
+// 1. カスタムフィールドコンポーネント
+export const TextField = ({
+  name,
+  label,
+  validate,
+  transform,
+  ...props
+}: TextFieldProps) => (
+  <form.AppField
+    name={name}
+    validators={validate}
+    transform={transform}
+    children={(field) => (
+      <field.TextField
+        label={label}
+        {...props}
+      />
+    )}
+  />
+);
+
+// 2. 配列フィールドコンポーネント
+export const ArrayField = ({
+  name,
+  children,
+  addLabel = "追加",
+  ...props
+}: ArrayFieldProps) => (
+  <form.Field
+    name={name}
+    mode="array"
+    children={(arrayField) => (
+      <div className="array-field">
+        {arrayField.state.value.map((_, index) => (
+          <div key={index} className="array-field-item">
+            {children(index)}
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => arrayField.removeValue(index)}
+            >
+              削除
+            </Button>
+          </div>
+        ))}
+        <Button
+          type="button"
+          onClick={() => arrayField.pushValue(props.defaultValue)}
+        >
+          {addLabel}
+        </Button>
+      </div>
+    )}
+  />
+);
+
+// 3. インラインフィールドコンポーネント
+export const InlineField = ({
+  name,
+  validate,
+  onSave,
+  ...props
+}: InlineFieldProps) => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  return (
+    <form.AppField
+      name={name}
+      validators={validate}
+      children={(field) => (
+        <div className="inline-field">
+          {isEditing ? (
+            <field.TextField
+              autoFocus
+              onBlur={() => {
+                setIsEditing(false);
+                onSave?.(field.state.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  setIsEditing(false);
+                  field.setValue(field.state.initialValue);
+                }
+              }}
+              {...props}
+            />
+          ) : (
+            <div onClick={() => setIsEditing(true)}>
+              {field.state.value || props.placeholder}
+            </div>
+          )}
+        </div>
+      )}
+    />
+  );
+};
+```
+
+### バリデーションパターン
+
+```typescript
+// 1. Valibot スキーマによるバリデーション
+const TaskSchema = object({
+  title: string([
+    minLength(1, "タイトルは必須です"),
+    maxLength(100, "タイトルは100文字以内で入力してください"),
+  ]),
+  description: string([maxLength(500, "説明は500文字以内で入力してください")]),
+});
+
+// 2. カスタムバリデーションフック
+export const useValidation = (schema: any) => ({
+  onChange: schema,
+  onChangeAsyncDebounce: 500,
+  onChangeAsync: async ({ value }) => {
+    // サーバーサイドバリデーション
+    const result = await validateOnServer(value);
+    return result.error;
+  },
+});
+
+// 3. フィールド単位のバリデーション
+export const useFieldValidation = (rules: ValidationRules) => ({
+  onChange: ({ value }) => {
+    for (const [rule, message] of Object.entries(rules)) {
+      if (!rule(value)) return message;
+    }
+  },
+});
+```
+
+### リアクティブパターン
+
+```typescript
+// 1. フォーム状態の購読
+export const FormStateObserver = () => {
+  const formState = useStore(form.store, (state) => ({
+    isDirty: state.isDirty,
+    isValid: state.isValid,
+    errors: state.errorMap,
+  }));
+
+  return (
+    <div className="form-state">
+      <div>Dirty: {formState.isDirty ? "Yes" : "No"}</div>
+      <div>Valid: {formState.isValid ? "Yes" : "No"}</div>
+      {/* エラー表示 */}
+    </div>
+  );
+};
+
+// 2. フィールド間の連動
+export const LinkedFields = () => {
+  const form = useAppForm({
+    defaultValues: {
+      price: 0,
+      tax: 0,
+      total: 0,
+    },
+    onFieldChange: ({ name, value, setFieldValue }) => {
+      if (name === "price" || name === "tax") {
+        const price = form.getFieldValue("price");
+        const tax = form.getFieldValue("tax");
+        setFieldValue("total", price + tax);
+      }
+    },
+  });
+};
+```
+
+### エラー処理パターン
+
+```typescript
+// 1. フォームエラーバウンダリ
+export const FormErrorBoundary = ({ children }) => (
+  <ErrorBoundary
+    fallback={({ error }) => (
+      <div className="form-error">
+        <h3>フォームエラー</h3>
+        <p>{error.message}</p>
+      </div>
+    )}
+  >
+    {children}
+  </ErrorBoundary>
+);
+
+// 2. API エラーハンドリング
+export const useFormSubmission = <T,>(options: SubmissionOptions<T>) => {
+  const form = useAppForm({
+    ...options,
+    onSubmit: async ({ value }) => {
+      try {
+        await options.onSubmit(value);
+      } catch (error) {
+        if (error instanceof ApiError) {
+          // APIエラーをフォームエラーに変換
+          return {
+            form: error.message,
+            fields: error.fieldErrors,
+          };
+        }
+        throw error;
+      }
+    },
+  });
+
+  return form;
+};
+```
+
+### インライン編集パターン
+
+```typescript
+interface InlineEditProps {
+  value: string;
+  onSave: (value: string) => Promise<void>;
+}
+
+function InlineEdit({ value, onSave }: InlineEditProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(value);
+  
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setIsEditing(false);
+      setEditValue(value);
+    } else if (e.key === 'Enter') {
+      handleSave();
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      await onSave(editValue);
+      setIsEditing(false);
+    } catch (err) {
+      // エラーハンドリング
+    }
+  };
+
+  return isEditing ? (
+    <input
+      value={editValue}
+      onChange={e => setEditValue(e.target.value)}
+      onKeyDown={handleKeyDown}
+      onBlur={handleSave}
+      autoFocus
+    />
+  ) : (
+    <div onClick={() => setIsEditing(true)}>{value}</div>
+  );
+}
+```
+
+### 楽観的更新パターン
+
+```typescript
+function useOptimisticUpdate<T extends { id: string }>(
+  queryKey: string[],
+  updateFn: (item: T) => Promise<T>
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateFn,
+    onMutate: async (newItem) => {
+      // 既存のクエリデータの取得
+      const previousData = queryClient.getQueryData<T[]>(queryKey);
+
+      // 楽観的に更新
+      queryClient.setQueryData<T[]>(queryKey, (old) =>
+        old?.map((item) => (item.id === newItem.id ? newItem : item))
+      );
+
+      return { previousData };
+    },
+    onError: (err, newItem, context) => {
+      // エラー時に元のデータに戻す
+      queryClient.setQueryData(queryKey, context?.previousData);
+    },
+    onSettled: () => {
+      // クエリを再検証
+      queryClient.invalidateQueries(queryKey);
+    },
+  });
+}
+```
+
+### フィルタリングパターン
+
+```typescript
+interface FilterState<T> {
+  filters: Record<keyof T, any>;
+  sortBy?: keyof T;
+  sortOrder: 'asc' | 'desc';
+}
+
+function useFilteredData<T>(
+  data: T[],
+  filterState: FilterState<T>
+): T[] {
+  return useMemo(() => {
+    let filtered = [...data];
+
+    // フィルター適用
+    Object.entries(filterState.filters).forEach(([key, value]) => {
+      if (value) {
+        filtered = filtered.filter(item => item[key] === value);
+      }
+    });
+
+    // ソート適用
+    if (filterState.sortBy) {
+      filtered.sort((a, b) => {
+        const aVal = a[filterState.sortBy!];
+        const bVal = b[filterState.sortBy!];
+        return filterState.sortOrder === 'asc'
+          ? aVal > bVal ? 1 : -1
+          : aVal < bVal ? 1 : -1;
+      });
+    }
+
+    return filtered;
+  }, [data, filterState]);
+}
+```
+
 ### Suspense によるデータフェッチ
 
 ```typescript
