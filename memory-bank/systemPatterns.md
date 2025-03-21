@@ -103,38 +103,64 @@ graph TD
 
 ## コンポーネントパターン
 
-### Presentational Components
+### Suspense によるデータフェッチ
 
 ```typescript
-// 例: TodoListItem.tsx
-interface TodoListItemProps {
-  title: string;
-  completed: boolean;
-  onToggle: () => void;
-  onDelete: () => void;
+// 例: ErrorBoundary
+class TodoErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <ErrorMessage message="タスクの読み込み中にエラーが発生しました" />
+      );
+    }
+
+    return this.props.children;
+  }
 }
 
-export function TodoListItem({
-  title,
-  completed,
-  onToggle,
-  onDelete
-}: TodoListItemProps) {
-  return (/* UI実装 */);
+// 例: TodoList with Suspense
+export function TodoList() {
+  return (
+    <TodoErrorBoundary>
+      <Suspense fallback={<LoadingSpinner />}>
+        <TodoListContent />
+      </Suspense>
+    </TodoErrorBoundary>
+  );
 }
-```
 
-### Container Components
+function TodoListContent() {
+  const todos = useTodos(); // このフックはSuspenseに対応
 
-```typescript
-// 例: TodoListContainer.tsx
-export function TodoListContainer() {
-  const { data, isLoading, error } = useTodos();
+  return (
+    <ul>
+      {todos.map((todo) => (
+        <TodoListItem key={todo.id} {...todo} />
+      ))}
+    </ul>
+  );
+}
 
-  if (isLoading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage error={error} />;
-
-  return <TodoList todos={data} />;
+// Suspense対応のデータフェッチフック
+function useTodos() {
+  return useQuery({
+    queryKey: ['todos'],
+    queryFn: fetchTodos,
+    suspense: true, // Suspenseモードを有効化
+  }).data;
 }
 ```
 
