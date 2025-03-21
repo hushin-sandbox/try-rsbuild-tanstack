@@ -4,12 +4,12 @@ import type {
   RecurrenceFrequency,
   TaskPriority,
   TaskStatus,
-} from '../../../shared/lib/types';
+} from '~shared/lib/types';
 import {
   recurrenceFrequencySchema,
   taskPrioritySchema,
   taskStatusSchema,
-} from '../../../shared/lib/types';
+} from '~shared/lib/types';
 
 // Recurrence Rule Schema
 const recurrenceRuleSchema = v.object({
