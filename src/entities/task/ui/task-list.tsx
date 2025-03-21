@@ -1,3 +1,4 @@
+import { Badge } from '~shared/ui/badge';
 import { useTasks } from '../api/useTasks';
 import type { Task } from '../model/task';
 
@@ -37,11 +38,11 @@ function TaskItem({ task }: { task: Task }) {
 }
 
 function StatusBadge({ status }: { status: Task['status'] }) {
-  const colors = {
-    todo: 'bg-gray-100 text-gray-800',
-    in_progress: 'bg-blue-100 text-blue-800',
-    done: 'bg-green-100 text-green-800',
-  };
+  const variant = {
+    todo: 'secondary',
+    in_progress: 'default',
+    done: 'outline',
+  } as const;
 
   const labels = {
     todo: '未着手',
@@ -49,21 +50,15 @@ function StatusBadge({ status }: { status: Task['status'] }) {
     done: '完了',
   };
 
-  return (
-    <span
-      className={`px-2 py-1 text-xs rounded-full font-medium ${colors[status]}`}
-    >
-      {labels[status]}
-    </span>
-  );
+  return <Badge variant={variant[status]}>{labels[status]}</Badge>;
 }
 
 function PriorityBadge({ priority }: { priority: Task['priority'] }) {
-  const colors = {
-    low: 'bg-gray-100 text-gray-800',
-    medium: 'bg-yellow-100 text-yellow-800',
-    high: 'bg-red-100 text-red-800',
-  };
+  const variant = {
+    low: 'secondary',
+    medium: 'default',
+    high: 'destructive',
+  } as const;
 
   const labels = {
     low: '低',
@@ -71,11 +66,5 @@ function PriorityBadge({ priority }: { priority: Task['priority'] }) {
     high: '高',
   };
 
-  return (
-    <span
-      className={`px-2 py-1 text-xs rounded-full font-medium ${colors[priority]}`}
-    >
-      {labels[priority]}
-    </span>
-  );
+  return <Badge variant={variant[priority]}>{labels[priority]}</Badge>;
 }
