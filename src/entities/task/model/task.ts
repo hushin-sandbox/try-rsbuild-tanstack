@@ -24,13 +24,13 @@ const baseTaskSchema = v.object({
     v.string('タイトルは文字列である必要があります'),
     v.transform((value) => value.trim()),
     v.minLength(1, 'タイトルは必須です'),
-    v.maxLength(100, 'タイトルは100文字以内で入力してください')
+    v.maxLength(100, 'タイトルは100文字以内で入力してください'),
   ),
   description: v.optional(
     v.pipe(
       v.string('説明は文字列である必要があります'),
-      v.maxLength(1000, '説明は1000文字以内で入力してください')
-    )
+      v.maxLength(1000, '説明は1000文字以内で入力してください'),
+    ),
   ),
   status: taskStatusSchema,
   priority: taskPrioritySchema,

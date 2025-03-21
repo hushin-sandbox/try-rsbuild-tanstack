@@ -21,7 +21,7 @@ describe('Task Model', () => {
         } as const;
 
         expect(() => v.parse(newTaskSchema, input)).toThrow(
-          'タイトルは必須です'
+          'タイトルは必須です',
         );
       });
 
@@ -36,7 +36,7 @@ describe('Task Model', () => {
         } as const;
 
         expect(() => v.parse(newTaskSchema, input)).toThrow(
-          'タイトルは必須です'
+          'タイトルは必須です',
         );
       });
 
@@ -77,7 +77,7 @@ describe('Task Model', () => {
         } as const;
 
         expect(() => v.parse(newTaskSchema, input)).toThrow(
-          'タイトルは100文字以内で入力してください'
+          'タイトルは100文字以内で入力してください',
         );
       });
     });
@@ -107,7 +107,7 @@ describe('Task Model', () => {
         } as const;
 
         expect(() => v.parse(newTaskSchema, input)).toThrow(
-          '説明は1000文字以内で入力してください'
+          '説明は1000文字以内で入力してください',
         );
       });
     });
@@ -126,7 +126,7 @@ describe('Task Model', () => {
           } as const;
 
           expect(() => v.parse(newTaskSchema, input)).not.toThrow();
-        }
+        },
       );
 
       it('無効な値でエラーになること', () => {
@@ -157,7 +157,7 @@ describe('Task Model', () => {
           } as const;
 
           expect(() => v.parse(newTaskSchema, input)).not.toThrow();
-        }
+        },
       );
 
       it('無効な値でエラーになること', () => {
