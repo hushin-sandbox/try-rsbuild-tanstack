@@ -22,6 +22,7 @@ const recurrenceRuleSchema = v.object({
 const baseTaskSchema = v.object({
   title: v.pipe(
     v.string('タイトルは文字列である必要があります'),
+    v.transform((value) => value.trim()),
     v.minLength(1, 'タイトルは必須です'),
     v.maxLength(100, 'タイトルは100文字以内で入力してください')
   ),
