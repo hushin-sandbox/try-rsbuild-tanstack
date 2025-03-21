@@ -1,207 +1,352 @@
-# FSD アーキテクチャ実装計画
+# ToDo 管理アプリケーション 実装計画書
 
-## 現状分析
+## 1. データモデル設計
 
-現在のプロジェクト構造：
+### Task モデル
 
-```
-src/
-├── app.tsx
-├── env.d.ts
-├── index.tsx
-├── routeTree.gen.ts
-├── styles.css
-├── components/
-│   └── ui/
-│       └── button.tsx
-├── lib/
-│   └── utils.ts
-└── routes/
-    ├── __root.tsx
-    ├── about.tsx
-    └── index.tsx
-```
+```typescript
+interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  dueDate?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  completedAt?: Date;
+  parentId?: string; // サブタスク用
+  recurrenceRule?: RecurrenceRule; // 繰り返しタスク用
+  tags: string[];
+}
 
-## 提案する FSD 構造
+enum TaskStatus {
+  TODO = 'todo',
+  IN_PROGRESS = 'in_progress',
+  DONE = 'done',
+}
 
-```
-src/
-├── app/               # アプリケーション初期化
-│   ├── index.tsx     # エントリーポイント
-│   ├── providers/    # アプリケーションレベルのプロバイダー
-│   └── styles/       # グローバルスタイル
-│
-├── pages/            # ページコンポーネント
-│   ├── _layout/     # レイアウトコンポーネント
-│   ├── home/        # ホームページ
-│   └── about/       # アバウトページ
-│
-├── widgets/          # 複合UIブロック
-│   ├── header/      # ヘッダーウィジェット
-│   └── sidebar/     # サイドバーウィジェット
-│
-├── features/         # 機能実装
-│   ├── todo/        # Todo機能
-│   │   ├── api/     # APIフック
-│   │   ├── model/   # 機能固有の型定義
-│   │   └── ui/      # 機能のUIコンポーネント
-│   └── filter/      # フィルター機能
-│
-├── entities/         # ビジネスエンティティ
-│   └── todo/        # Todoエンティティ
-│       ├── model/   # エンティティモデル
-│       └── ui/      # エンティティ関連のUI
-│
-└── shared/          # 共有リソース
-    ├── api/         # APIクライアント
-    ├── config/      # 設定
-    ├── lib/         # ユーティリティ
-    └── ui/          # 共通UIコンポーネント
+enum TaskPriority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+}
+
+interface RecurrenceRule {
+  frequency: 'daily' | 'weekly' | 'monthly';
+  interval: number; // 繰り返し間隔
+  endDate?: Date;
+}
 ```
 
-## 移行計画
+### Tag モデル
 
-### フェーズ 1: 基本構造の作成と既存コードの移行
+```typescript
+interface Tag {
+  id: string;
+  name: string;
+  color: string;
+}
+```
 
-1. **ディレクトリ構造の作成**
+## 2. API 設計
 
-   - 各 FSD レイヤーのディレクトリを作成
-   - 必要な内部構造を設定
+### Tasks API
 
-2. **既存コードの移行**
-   - `components/ui` → `shared/ui`
-   - `lib/utils.ts` → `shared/lib`
-   - `routes/*` → `pages/*`
-   - `app.tsx` → `app/providers`
-   - `styles.css` → `app/styles`
+#### タスク一覧取得
 
-### フェーズ 2: 機能実装の準備
+```
+GET /api/tasks
+Query Parameters:
+- status?: TaskStatus
+- priority?: TaskPriority
+- parentId?: string
+- tag?: string
+- search?: string
+- sortBy?: 'dueDate' | 'priority' | 'createdAt' | 'title'
+- sortOrder?: 'asc' | 'desc'
 
-1. **Todo 機能の基盤作成**
+Response: Task[]
+```
 
-   ```
-   features/todo/
-   ├── api/
-   │   ├── types.ts
-   │   └── todoApi.ts
-   ├── model/
-   │   └── types.ts
-   └── ui/
-       ├── TodoList.tsx
-       ├── TodoItem.tsx
-       └── TodoForm.tsx
-   ```
+#### タスク詳細取得
 
-2. **エンティティの定義**
-   ```
-   entities/todo/
-   ├── model/
-   │   ├── todo.ts
-   │   └── types.ts
-   └── ui/
-       └── TodoCard.tsx
-   ```
+```
+GET /api/tasks/:id
+Response: Task
+```
 
-### フェーズ 3: 共通基盤の整備
+#### タスク作成
 
-1. **API クライアントの設定**
+```
+POST /api/tasks;
+Body: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>;
+Response: Task;
+```
 
-   ```
-   shared/api/
-   ├── client.ts
-   └── types.ts
-   ```
+#### タスク更新
 
-2. **共通 UI コンポーネント**
-   ```
-   shared/ui/
-   ├── button/
-   ├── input/
-   └── card/
-   ```
+```
+PATCH /api/tasks/:id
+Body: Partial<Task>
+Response: Task
+```
 
-### フェーズ 4: エラーハンドリングとデータフェッチの実装
+#### タスク削除
 
-1. **ErrorBoundary の実装**
+```
+DELETE /api/tasks/:id
+Response: void
+```
 
-   ```
-   shared/ui/error-boundary/
-   ├── ErrorBoundary.tsx
-   ├── ErrorMessage.tsx
-   └── types.ts
-   ```
+### Tags API
 
-2. **Suspense 対応のデータフェッチ基盤**
+#### タグ一覧取得
 
-   ```
-   shared/api/
-   ├── hooks/
-   │   └── useSuspenseQuery.ts
-   └── providers/
-       └── QueryProvider.tsx
-   ```
+```
+GET /api/tags
+Response: Tag[]
+```
 
-3. **ローディング UI の実装**
-   ```
-   shared/ui/loading/
-   ├── LoadingSpinner.tsx
-   └── SkeletonLoader.tsx
-   ```
+#### タグ作成
 
-実装の詳細：
+```
+POST /api/tags;
+Body: Omit<Tag, 'id'>;
+Response: Tag;
+```
 
-1. **ErrorBoundary の設定**
+## 3. 画面設計
 
-   - グローバルエラーハンドリング
-   - コンポーネント単位のエラー境界
-   - カスタムエラーメッセージ
+### ページ構成
 
-2. **Suspense の活用**
+1. メインページ (`/`)
 
-   - ルートレベルのフォールバック
-   - コンポーネントレベルのローディング状態
-   - 段階的なローディング
+   - タスク一覧表示
+   - ビュー切り替え（リスト/カンバン）
+   - タスク作成ボタン
+   - 基本的なフィルター機能
 
-3. **TanStack Query の設定**
-   - Suspense モードの有効化
-   - エラーハンドリングの設定
-   - キャッシュ戦略の定義
+2. 検索ページ (`/search`)
 
-## 実装の優先順位
+   - 高度な検索機能
+   - カスタムフィルター
+   - 保存済み検索条件
+   - 検索結果の表示オプション
 
-1. 基本ディレクトリ構造の作成
-2. 既存コードの移行
-3. エラーハンドリングとデータフェッチの基盤実装
-4. Todo エンティティの実装
-5. 基本的な Todo 機能の実装
-6. 共通コンポーネントの整備
+3. タスク詳細ページ (`/tasks/:id`)
+   - タスク詳細情報表示
+   - 編集フォーム
+   - サブタスク一覧
+   - 繰り返し設定
 
-## 技術的な考慮事項
+### コンポーネント設計
 
-1. **型安全性**
+#### 共通コンポーネント
 
-   - 各レイヤーで適切な型定義を維持
-   - レイヤー間の明確なインターフェース定義
+- `TaskCard`: タスクの基本情報表示
+- `TaskForm`: タスク作成/編集フォーム
+- `TaskList`: タスクのリスト表示
+- `KanbanBoard`: カンバンビュー
+- `TaskFilter`: フィルター UI
+- `TagSelector`: タグ選択 UI
+- `DatePicker`: 日付選択
+- `ErrorBoundary`: エラーハンドリング
+- `LoadingSpinner`: ローディング表示
 
-2. **テスト容易性**
+#### 機能コンポーネント
 
-   - 各レイヤーの独立したテスト
-   - 適切なモック境界の設定
+- `TaskListView`: リストビューのメイン画面
+- `KanbanView`: カンバンビューのメイン画面
+- `TaskDetails`: タスク詳細画面
+- `SubtaskList`: サブタスク一覧
+- `RecurrenceSettings`: 繰り返し設定 UI
 
-3. **パフォーマンス**
-   - 適切なコード分割
-   - 効率的な依存関係管理
-   - Suspense による最適なローディング体験
+## 4. 状態管理設計
 
-## 次のステップ
+### Zustand Store
 
-1. この実装計画のレビューと承認
-2. 基本ディレクトリ構造の作成
-3. エラーハンドリングとデータフェッチの基盤実装
-4. 既存コードの段階的な移行
+```typescript
+interface TaskStore {
+  // State
+  tasks: Task[];
+  selectedTask: Task | null;
+  filters: TaskFilters;
+  view: 'list' | 'kanban';
 
-## 質問事項
+  // Actions
+  fetchTasks: () => Promise<void>;
+  createTask: (task: NewTask) => Promise<void>;
+  updateTask: (id: string, updates: Partial<Task>) => Promise<void>;
+  deleteTask: (id: string) => Promise<void>;
+  setFilters: (filters: Partial<TaskFilters>) => void;
+  setView: (view: 'list' | 'kanban') => void;
+}
+```
 
-1. 提案したディレクトリ構造について、調整が必要な点はありますか？
-2. エラーハンドリングとデータフェッチの実装方針は適切でしょうか？
-3. 優先順位の設定は適切でしょうか？
+### TanStack Query 設定
+
+```typescript
+// デフォルトで Suspense モードを有効化
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      suspense: true,
+      useErrorBoundary: true,
+    },
+  },
+});
+
+// Queries
+const useTasks = (filters: TaskFilters) => {
+  return useQuery({
+    queryKey: ['tasks', filters],
+    queryFn: () => fetchTasks(filters),
+  });
+};
+
+const useTask = (id: string) => {
+  return useQuery({
+    queryKey: ['task', id],
+    queryFn: () => fetchTask(id),
+  });
+};
+
+// Mutations
+const useCreateTask = () => {
+  return useMutation({
+    mutationFn: createTask,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    },
+  });
+};
+
+// エラーバウンダリとSuspenseを使用するラッパーコンポーネント
+const QueryBoundary: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  return (
+    <ErrorBoundary fallback={<ErrorFallback />}>
+      <Suspense fallback={<LoadingSpinner />}>{children}</Suspense>
+    </ErrorBoundary>
+  );
+};
+```
+
+## 5. エラーハンドリング設計
+
+### エラータイプ
+
+```typescript
+enum ErrorType {
+  NETWORK_ERROR = 'network_error',
+  VALIDATION_ERROR = 'validation_error',
+  NOT_FOUND = 'not_found',
+  UNAUTHORIZED = 'unauthorized',
+  UNKNOWN_ERROR = 'unknown_error',
+}
+
+interface AppError {
+  type: ErrorType;
+  message: string;
+  details?: Record<string, string>;
+}
+```
+
+### エラーハンドリング戦略
+
+1. **API エラー**
+
+   - TanStack Query のエラーハンドリング機能を使用
+   - エラー種別に応じた適切な UI フィードバック
+
+2. **バリデーションエラー**
+
+   - Valibot でのフォームバリデーション
+   - インラインエラーメッセージ表示
+
+3. **ネットワークエラー**
+   - オフライン状態の検知
+   - 再試行メカニズム
+   - オフラインモードでのローカルデータ使用
+
+## 6. 実装フェーズ
+
+### フェーズ 1: 基本機能
+
+1. プロジェクト設定
+
+   - FSD ディレクトリ構造
+   - MSW 設定
+   - TanStack Query 設定
+
+2. 基本的なタスク管理
+   - タスク一覧表示
+   - タスク作成
+   - タスク編集
+   - タスク削除
+
+### フェーズ 2: ビュー実装
+
+1. リストビュー
+2. カンバンビュー
+3. ドラッグ＆ドロップ
+
+### フェーズ 3: 高度な機能
+
+1. サブタスク
+2. 繰り返しタスク
+3. タグ管理
+
+### フェーズ 4: 検索・フィルター
+
+1. 検索機能
+2. フィルター機能
+3. ソート機能
+
+### フェーズ 5: 最適化
+
+1. パフォーマンス最適化
+2. エラーハンドリング改善
+3. UX 改善
+
+## 7. 技術的な考慮事項
+
+### パフォーマンス最適化
+
+1. 仮想化スクロール
+2. 適切なキャッシュ戦略
+3. 遅延読み込み
+4. メモ化による再レンダリング最適化
+
+### セキュリティ
+
+1. XSS 対策
+2. データのバリデーション
+3. API レートリミット
+
+### アクセシビリティ
+
+1. キーボード操作
+2. スクリーンリーダー対応
+3. カラーコントラスト
+4. WAI-ARIA 対応
+
+### テスト戦略
+
+1. 単体テスト
+
+   - コンポーネント
+   - ストア
+   - ユーティリティ関数
+
+2. 統合テスト
+
+   - API 統合
+   - フォーム送信
+   - フィルター機能
+
+3. E2E テスト
+   - 主要なユーザーフロー
+   - エラーケース
