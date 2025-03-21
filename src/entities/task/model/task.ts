@@ -1,15 +1,11 @@
 import * as v from 'valibot';
-import type {
-  BaseEntity,
-  RecurrenceFrequency,
-  TaskPriority,
-  TaskStatus,
-} from '~shared/lib/types';
+import type { BaseEntity } from '~shared/lib/entity';
+import type { RecurrenceFrequency, TaskPriority, TaskStatus } from './types';
 import {
   recurrenceFrequencySchema,
   taskPrioritySchema,
   taskStatusSchema,
-} from '~shared/lib/types';
+} from './types';
 
 // Recurrence Rule Schema
 const recurrenceRuleSchema = v.object({
