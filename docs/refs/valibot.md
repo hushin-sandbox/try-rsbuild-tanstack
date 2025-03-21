@@ -1,5 +1,30 @@
 # Valibot チートシート
 
+## Example
+
+```ts
+import * as v from 'valibot';
+
+// Create login schema with email and password
+const LoginSchema = v.object({
+  email: v.pipe(v.string(), v.email()),
+  password: v.pipe(v.string(), v.minLength(8)),
+});
+
+// Infer output TypeScript type of login schema as
+// { email: string; password: string }
+type LoginData = v.InferOutput<typeof LoginSchema>;
+
+// Throws error for email and password
+const output1 = v.parse(LoginSchema, { email: '', password: '' });
+
+// Returns data as { email: string; password: string }
+const output2 = v.parse(LoginSchema, {
+  email: 'jane@example.com',
+  password: '12345678',
+});
+```
+
 ## はじめに
 
 Valibot は、型安全で軽量なデータバリデーションライブラリです。スキーマを使用してデータの構造と制約を定義し、実行時に検証を行います。
