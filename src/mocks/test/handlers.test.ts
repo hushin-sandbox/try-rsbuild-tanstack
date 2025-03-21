@@ -1,8 +1,6 @@
-import type { Task } from '~entities/task/model/task';
-import { beforeEach, describe, expect, it } from 'vitest';
-import { handlers } from '../handlers';
-import { http } from 'msw';
 import { setupServer } from 'msw/node';
+import { describe, expect, it } from 'vitest';
+import { handlers } from '../handlers';
 
 const server = setupServer(...handlers);
 

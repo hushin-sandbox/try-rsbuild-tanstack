@@ -1,5 +1,5 @@
-import type { Task } from '../model/task';
 import { useTasks } from '../api/useTasks';
+import type { Task } from '../model/task';
 
 export function TaskList() {
   const { data: tasks } = useTasks();

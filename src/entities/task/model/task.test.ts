@@ -1,10 +1,10 @@
 import * as v from 'valibot';
 import {
-  createTask,
-  newTaskSchema,
-  TaskMethods,
   type NewTask,
   type Task,
+  TaskMethods,
+  createTask,
+  newTaskSchema,
 } from './task';
 
 describe('Task Model', () => {

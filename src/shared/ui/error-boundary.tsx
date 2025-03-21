@@ -1,9 +1,9 @@
-import {
-  ErrorBoundary as ReactErrorBoundary,
-  type FallbackProps,
-} from 'react-error-boundary';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
+import {
+  type FallbackProps,
+  ErrorBoundary as ReactErrorBoundary,
+} from 'react-error-boundary';
 import { Button } from './button';
 import { Card } from './card';
 
