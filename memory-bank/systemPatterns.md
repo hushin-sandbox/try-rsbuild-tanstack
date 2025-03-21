@@ -101,6 +101,66 @@ graph TD
 2. 既存の UI を`widgets`と`pages`に大まかに分配
 3. 徐々に依存関係の問題を解決し、`entities`や`features`を抽出
 
+## ルーティングパターン
+
+### TanStack Router の File-Based Routing
+
+TanStack Router は、Next.js のようなファイルベースのルーティングを実現します。
+
+#### ディレクトリ構造
+
+```
+src/routes/
+├── __root.tsx    # ルートレイアウト
+├── index.tsx     # ホームページ
+└── about.tsx     # アバウトページ
+```
+
+#### 自動生成と型安全性
+
+- `routeTree.gen.ts` が自動生成され、型安全なルーティングを提供
+- RSpack プラグインによる自動コード生成
+- TypeScript の型定義により、ルートパスの補完とバリデーション
+
+```typescript
+// ルートレイアウト (__root.tsx)
+export const Route = createRootRoute({
+  component: RootComponent,
+});
+
+// ページコンポーネント (about.tsx)
+export const Route = createFileRoute('/about')({
+  component: AboutComponent,
+});
+```
+
+#### コード分割の自動化
+
+```typescript
+// rsbuild.config.ts
+TanStackRouterRspack({
+  target: 'react',
+  autoCodeSplitting: true,
+});
+```
+
+- 各ルートは自動的に分割されてチャンクに
+- ルートごとの遅延ロードを最適化
+- ユーザー体験とパフォーマンスを向上
+
+#### ルート定義パターン
+
+1. **ルートレイアウト**
+
+   - 共通のナビゲーション
+   - 開発用デバッグツール
+   - 共有レイアウト要素
+
+2. **ページコンポーネント**
+   - 単一責任の原則に従う
+   - データフェッチはコンポーネント内で
+   - 必要に応じてネストされたルートをサポート
+
 ## コンポーネントパターン
 
 ### Suspense によるデータフェッチ
