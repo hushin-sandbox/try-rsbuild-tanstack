@@ -9,7 +9,8 @@
     "**/routeTree.gen.ts": true
   },
   "editor.codeActionsOnSave": {
-    "source.fixAll.biome": "explicit"
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports": "always"
   },
   "editor.defaultFormatter": "biomejs.biome",
   "[css]": {
