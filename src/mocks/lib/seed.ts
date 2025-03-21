@@ -23,6 +23,13 @@ const sampleTasks: NewTask[] = [
 ];
 
 export function seedTasks(): void {
+  // 既にタスクが存在する場合は、シードデータを追加しない
+  const existingTasks = storageAdapter.getTasks();
+  if (existingTasks.length > 0) {
+    return;
+  }
+
+  // タスクが存在しない場合のみシードデータを追加
   for (const task of sampleTasks) {
     const newTask = createTask(task);
     storageAdapter.saveTask(newTask);
