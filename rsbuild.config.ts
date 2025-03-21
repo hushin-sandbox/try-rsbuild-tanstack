@@ -4,9 +4,9 @@ import { TanStackRouterRspack } from '@tanstack/router-plugin/rspack';
 
 export default defineConfig({
   plugins: [pluginReact()],
-  resolve: {
+  source: {
     alias: {
-      '@/*': './src/*',
+      '~': './src',
     },
   },
   tools: {
@@ -14,6 +14,11 @@ export default defineConfig({
       plugins: [
         TanStackRouterRspack({ target: 'react', autoCodeSplitting: true }),
       ],
+    },
+  },
+  server: {
+    publicDir: {
+      name: 'public',
     },
   },
 });
