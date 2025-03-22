@@ -61,6 +61,7 @@ const useFormField = () => {
     formDescriptionId: `${id}-form-item-description`,
     formMessageId: `${id}-form-item-message`,
     ...field.state.meta,
+    error: field.state.meta.errors[0],
     value: field.state.value,
   };
 };
@@ -79,12 +80,12 @@ function FormLabel({
   className,
   ...props
 }: React.ComponentProps<typeof LabelPrimitive.Root>) {
-  const { formItemId, errors } = useFormField();
+  const { formItemId, error } = useFormField();
 
   return (
     <Label
       data-slot="form-label"
-      data-error={errors.length > 0}
+      data-error={!!error}
       className={cn('data-[error=true]:text-destructive', className)}
       htmlFor={formItemId}
       {...props}
@@ -93,7 +94,7 @@ function FormLabel({
 }
 
 function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
-  const { formItemId, formDescriptionId, formMessageId, errors } =
+  const { formItemId, formDescriptionId, formMessageId, error } =
     useFormField();
 
   return (
@@ -101,11 +102,9 @@ function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
       data-slot="form-control"
       id={formItemId}
       aria-describedby={
-        errors.length > 0
-          ? `${formDescriptionId} ${formMessageId}`
-          : formDescriptionId
+        error ? `${formDescriptionId} ${formMessageId}` : formDescriptionId
       }
-      aria-invalid={errors.length > 0}
+      aria-invalid={error}
       {...props}
     />
   );
@@ -129,8 +128,8 @@ function FormMessage({
   children,
   ...props
 }: React.ComponentProps<'p'>) {
-  const { formMessageId, errors } = useFormField();
-  const body = errors.length > 0 ? errors[0].message : children;
+  const { formMessageId, error } = useFormField();
+  const body = error ? String(error?.message ?? '') : children;
 
   if (!body) {
     return null;
