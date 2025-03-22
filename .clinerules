@@ -109,6 +109,10 @@ const output2 = v.parse(LoginSchema, {
 
 [document](docs/refs/storybook.md) を参照
 
+### React テストのベストプラクティス
+
+[document](docs/refs/react-testing.md) を参照
+
 ## テスト基準
 
 - ビジネスロジックには単体テストを必須とする
