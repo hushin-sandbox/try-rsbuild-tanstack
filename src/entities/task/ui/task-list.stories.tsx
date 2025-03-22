@@ -1,27 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { http, HttpResponse } from 'msw';
 import { emptyTasks, sampleTasks } from '~/mocks/data';
 import { TaskList } from './task-list';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
-});
-
-const Decorator = (Story: React.ComponentType) => (
-  <QueryClientProvider client={queryClient}>
-    <Story />
-  </QueryClientProvider>
-);
-
 const meta = {
-  title: 'Entities/Task/TaskList',
   component: TaskList,
-  decorators: [Decorator],
   parameters: {
     // デフォルトのモックハンドラー
     msw: {
