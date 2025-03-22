@@ -21,17 +21,19 @@ export function TaskList() {
 function TaskItem({ task }: { task: Task }) {
   return (
     <li className="p-4 border rounded hover:bg-gray-50">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between">
           <h3 className="font-semibold">{task.title}</h3>
-          {task.description && (
-            <p className="text-sm text-gray-600">{task.description}</p>
-          )}
+          <div className="flex items-center gap-2">
+            <StatusBadge status={task.status} />
+            <PriorityBadge priority={task.priority} />
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <StatusBadge status={task.status} />
-          <PriorityBadge priority={task.priority} />
-        </div>
+        {task.description && (
+          <p className="text-sm text-gray-600">
+            {truncateText(task.description, 200)}
+          </p>
+        )}
       </div>
     </li>
   );
@@ -67,4 +69,12 @@ function PriorityBadge({ priority }: { priority: Task['priority'] }) {
   };
 
   return <Badge variant={variant[priority]}>{labels[priority]}</Badge>;
+}
+
+// 長いテキストを省略する関数
+function truncateText(text: string, maxLength: number): string {
+  if (text.length <= maxLength) {
+    return text;
+  }
+  return `${text.slice(0, maxLength)}...`;
 }

@@ -18,12 +18,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/shared/ui/select';
+import { Textarea } from '~/shared/ui/textarea';
 import { type NewTask, newTaskSchema } from '../model/task';
 import type { TaskPriority, TaskStatus } from '../model/types';
 
-// フォームのサブセットスキーマ（最小限のフィールド）
+// フォームのサブセットスキーマ（最小限のフィールド + description）
 const taskFormSchema = v.object({
   title: newTaskSchema.entries.title,
+  description: newTaskSchema.entries.description,
   status: newTaskSchema.entries.status,
   priority: newTaskSchema.entries.priority,
 });
@@ -34,6 +36,7 @@ type TaskFormValues = v.InferOutput<typeof taskFormSchema>;
 // デフォルト値
 const defaultValues: TaskFormValues = {
   title: '',
+  description: '',
   status: 'todo',
   priority: 'medium',
 };
@@ -57,7 +60,6 @@ export function TaskForm({ onSubmit, onCancel }: TaskFormProps) {
         // 完全なNewTaskオブジェクトを作成
         const newTask: NewTask = {
           ...validated,
-          description: undefined,
           dueDate: undefined,
           parentId: undefined,
           tags: [],
@@ -101,6 +103,29 @@ export function TaskForm({ onSubmit, onCancel }: TaskFormProps) {
               </FormControl>
               <FormDescription>
                 タスクの内容を簡潔に入力してください
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+        )}
+      </form.AppField>
+
+      {/* 説明フィールド */}
+      <form.AppField name="description">
+        {(field) => (
+          <FormField name={field.name}>
+            <FormItem>
+              <FormLabel>説明</FormLabel>
+              <FormControl>
+                <Textarea
+                  value={field.state.value ?? ''}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  placeholder="タスクの詳細な説明を入力"
+                />
+              </FormControl>
+              <FormDescription>
+                タスクの詳細を記述してください（1000文字以内）
               </FormDescription>
               <FormMessage />
             </FormItem>
