@@ -1,25 +1,11 @@
 import { initialize, mswLoader } from 'msw-storybook-addon';
-import React, { useEffect } from 'react';
+import React from 'react';
 import '../src/styles.css';
 
 import type { Preview } from '@storybook/react';
-import { useQueryClient } from '@tanstack/react-query';
 import { Providers, createQueryClient } from '../src/shared/lib/providers';
 
 initialize();
-
-const storybookQueryClient = createQueryClient({ retry: false });
-
-const ResetQueries = () => {
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    return () => {
-      queryClient.resetQueries();
-    };
-  }, [queryClient]);
-  return null;
-};
 
 const preview: Preview = {
   parameters: {},
@@ -27,9 +13,9 @@ const preview: Preview = {
 
   decorators: [
     (Story) => (
-      <Providers queryClient={storybookQueryClient}>
+      // NOTE: story切替時にQueryのキャッシュをクリアするため、createQueryClientで毎回新しいQueryClientを生成
+      <Providers queryClient={createQueryClient({ retry: false })}>
         <Story />
-        <ResetQueries />
       </Providers>
     ),
   ],
