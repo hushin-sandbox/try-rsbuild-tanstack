@@ -100,6 +100,10 @@ const output2 = v.parse(LoginSchema, {
 });
 ```
 
+### shadcn/ui コンポーネント
+
+必要に応じて `pnpm dlx shadcn@latest add (name)` でインストールして使ってください。
+詳しくは [document](docs/refs/shadcn-ui.md) を参照
 
 ## テスト基準
 
