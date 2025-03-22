@@ -169,7 +169,7 @@ TanStackRouterRspack({
 import { createFormHookContexts, createFormHook } from "@tanstack/react-form";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import { object, string, minLength, maxLength } from "valibot";
+import * as v from "valibot";
 
 // 1. フォーム・フィールドコンテキストの作成
 const { fieldContext, formContext } = createFormHookContexts();
@@ -372,12 +372,16 @@ export const InlineField = ({
 
 ```typescript
 // 1. Valibot スキーマによるバリデーション
-const TaskSchema = object({
-  title: string([
-    minLength(1, "タイトルは必須です"),
-    maxLength(100, "タイトルは100文字以内で入力してください"),
-  ]),
-  description: string([maxLength(500, "説明は500文字以内で入力してください")]),
+const TaskSchema = v.object({
+  title: v.pipe(
+    v.string(),
+    v.minLength(1, "タイトルは必須です"),
+    v.maxLength(100, "タイトルは100文字以内で入力してください")
+  ),
+  description: v.pipe(
+    v.string(),
+    v.maxLength(500, "説明は500文字以内で入力してください")
+  ),
 });
 
 // 2. カスタムバリデーションフック
@@ -721,15 +725,16 @@ async function handleApiError(error: unknown) {
 ### バリデーションパターン
 
 ```typescript
-import { object, string, boolean } from 'valibot';
+import * as v from 'valibot';
 
-const TodoSchema = object({
-  id: string(),
-  title: string([
-    minLength(1, 'Title is required'),
-    maxLength(100, 'Title is too long'),
-  ]),
-  completed: boolean(),
+const TodoSchema = v.object({
+  id: v.string(),
+  title: v.pipe(
+    v.string(),
+    v.minLength(1, 'Title is required'),
+    v.maxLength(100, 'Title is too long')
+  ),
+  completed: v.boolean(),
 });
 ```
 
