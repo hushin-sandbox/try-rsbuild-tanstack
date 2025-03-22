@@ -1,6 +1,4 @@
 import * as v from 'valibot';
-import type { BaseEntity } from '~/shared/lib/entity';
-import type { RecurrenceFrequency, TaskPriority, TaskStatus } from './types';
 import {
   recurrenceFrequencySchema,
   taskPrioritySchema,
@@ -13,6 +11,9 @@ const recurrenceRuleSchema = v.object({
   interval: v.number(),
   endDate: v.optional(v.string()),
 });
+
+// 型を自動生成
+export type RecurrenceRule = v.InferOutput<typeof recurrenceRuleSchema>;
 
 // Base Task Fields
 const baseTaskSchema = v.object({
@@ -37,23 +38,12 @@ const baseTaskSchema = v.object({
   recurrenceRule: v.optional(recurrenceRuleSchema),
 });
 
+// 型を自動生成
+export type BaseTask = v.InferOutput<typeof baseTaskSchema>;
+
 // New Task Schema (作成時に使用)
 export const newTaskSchema = baseTaskSchema;
-export type NewTask = {
-  title: string;
-  description?: string;
-  status: TaskStatus;
-  priority: TaskPriority;
-  dueDate?: string;
-  parentId?: string;
-  tags: string[];
-  isCompleted: boolean;
-  recurrenceRule?: {
-    frequency: RecurrenceFrequency;
-    interval: number;
-    endDate?: string;
-  };
-};
+export type NewTask = v.InferOutput<typeof newTaskSchema>;
 
 // Task Schema (既存のタスク)
 export const taskSchema = v.object({
@@ -64,10 +54,7 @@ export const taskSchema = v.object({
   completedAt: v.optional(v.string('完了日時は文字列である必要があります')),
 });
 
-export type Task = NewTask &
-  BaseEntity & {
-    completedAt?: string;
-  };
+export type Task = v.InferOutput<typeof taskSchema>;
 
 // Task Factory
 export const createTask = (data: NewTask): Task => {
