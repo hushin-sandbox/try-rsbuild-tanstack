@@ -22,7 +22,7 @@ export const {
 
 ```typescript
 // src/shared/ui/form/field.tsx
-import { useFieldContext } from '~/shared/lib/form-context'
+import { useFieldContext } from '~//shared/lib/form-context'
 import type { AnyFieldApi } from '@tanstack/react-form'
 
 export interface FormFieldProps {
@@ -70,7 +70,7 @@ export function TextField({ label }: { label: string }) {
 ```typescript
 // src/shared/lib/form.ts
 import { createFormHook } from '@tanstack/react-form'
-import { TextField, SelectField, TextareaField } from '~/shared/ui/form/field'
+import { TextField, SelectField, TextareaField } from '~//shared/ui/form/field'
 import { fieldContext, formContext } from './form-context'
 
 export const { useAppForm, withForm } = createFormHook({

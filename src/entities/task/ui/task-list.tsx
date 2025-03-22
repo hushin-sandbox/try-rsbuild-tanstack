@@ -1,4 +1,4 @@
-import { Badge } from '~shared/ui/badge';
+import { Badge } from '~/shared/ui/badge';
 import { useTasks } from '../api/useTasks';
 import type { Task } from '../model/task';
 

@@ -2,8 +2,8 @@ import type * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
 import * as React from 'react';
 
-import { useFieldContext } from '~shared/lib/form-context';
-import { cn } from '~shared/lib/utils';
+import { useFieldContext } from '~/shared/lib/form-context';
+import { cn } from '~/shared/lib/utils';
 import { Label } from './label';
 
 const Form = React.forwardRef<HTMLFormElement, React.ComponentProps<'form'>>(

@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import type { BaseEntity } from '~shared/lib/entity';
+import type { BaseEntity } from '~/shared/lib/entity';
 import type { RecurrenceFrequency, TaskPriority, TaskStatus } from './types';
 import {
   recurrenceFrequencySchema,

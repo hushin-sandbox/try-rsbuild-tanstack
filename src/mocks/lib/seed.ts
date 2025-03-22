@@ -1,4 +1,4 @@
-import type { NewTask } from '~entities/task/model/task';
+import type { NewTask } from '~/entities/task/model/task';
 import { createTask, storageAdapter } from './storage';
 
 const sampleTasks: NewTask[] = [

@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Suspense } from 'react';
 
-import { TaskList } from '~entities/task/ui/task-list';
-import { Button } from '~shared/ui/button';
+import { TaskList } from '~/entities/task/ui/task-list';
+import { Button } from '~/shared/ui/button';
 import {
   Card,
   CardContent,
@@ -10,8 +10,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '~shared/ui/card';
-import { LoadingFallback } from '~shared/ui/loading';
+} from '~/shared/ui/card';
+import { LoadingFallback } from '~/shared/ui/loading';
 
 export const Route = createFileRoute('/')({
   component: HomeComponent,

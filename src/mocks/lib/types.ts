@@ -1,4 +1,4 @@
-import type { Task } from '~entities/task/model/task';
+import type { Task } from '~/entities/task/model/task';
 
 export type APIResponse<T> = {
   data: T;

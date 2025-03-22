@@ -1,5 +1,5 @@
-import type { Task } from '~entities/task/model/task';
-import { createTask } from '~entities/task/model/task';
+import type { Task } from '~/entities/task/model/task';
+import { createTask } from '~/entities/task/model/task';
 
 const STORAGE_KEY = 'tasks';
 
