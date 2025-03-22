@@ -11,10 +11,17 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root';
+import { Route as FormTestImport } from './routes/form-test';
 import { Route as AboutImport } from './routes/about';
 import { Route as IndexImport } from './routes/index';
 
 // Create/Update Routes
+
+const FormTestRoute = FormTestImport.update({
+  id: '/form-test',
+  path: '/form-test',
+  getParentRoute: () => rootRoute,
+} as any);
 
 const AboutRoute = AboutImport.update({
   id: '/about',
@@ -46,6 +53,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport;
       parentRoute: typeof rootRoute;
     };
+    '/form-test': {
+      id: '/form-test';
+      path: '/form-test';
+      fullPath: '/form-test';
+      preLoaderRoute: typeof FormTestImport;
+      parentRoute: typeof rootRoute;
+    };
   }
 }
 
@@ -54,36 +68,41 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
   '/about': typeof AboutRoute;
+  '/form-test': typeof FormTestRoute;
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
   '/about': typeof AboutRoute;
+  '/form-test': typeof FormTestRoute;
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute;
   '/': typeof IndexRoute;
   '/about': typeof AboutRoute;
+  '/form-test': typeof FormTestRoute;
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/about';
+  fullPaths: '/' | '/about' | '/form-test';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/about';
-  id: '__root__' | '/' | '/about';
+  to: '/' | '/about' | '/form-test';
+  id: '__root__' | '/' | '/about' | '/form-test';
   fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
   AboutRoute: typeof AboutRoute;
+  FormTestRoute: typeof FormTestRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  FormTestRoute: FormTestRoute,
 };
 
 export const routeTree = rootRoute
@@ -97,7 +116,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about"
+        "/about",
+        "/form-test"
       ]
     },
     "/": {
@@ -105,6 +125,9 @@ export const routeTree = rootRoute
     },
     "/about": {
       "filePath": "about.tsx"
+    },
+    "/form-test": {
+      "filePath": "form-test.tsx"
     }
   }
 }
