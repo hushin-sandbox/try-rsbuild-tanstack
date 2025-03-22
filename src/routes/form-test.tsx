@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import * as v from 'valibot';
-import { useAppForm } from '../shared/lib/form';
+import { useAppForm } from '~/shared/lib/form';
 import {
   Form,
   FormControl,
@@ -9,8 +9,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../shared/ui/form';
-import { Input } from '../shared/ui/input';
+} from '~/shared/ui/form';
+import { Input } from '~/shared/ui/input';
 
 const formSchema = v.object({
   name: v.pipe(
