@@ -49,7 +49,6 @@
 - 配列型は、シンプルな場合は `T[]` を使い、複雑な場合は `Array<T>` を使う
 - モジュールとクラスは単一の目的を持つ
 - コード整形・リンティングは保存時に Biome が適用されます。Rooが行う必要はありません
-- Valibotは `import * as v from 'valibot';` でインポートして使う
 
 ### 型定義のベストプラクティス
 
@@ -72,6 +71,35 @@ function fetchUser(id: string): Promise<Result<User, ApiError>> {
   // 実装
 }
 ```
+
+### Valibot のルール
+
+詳しくは [document](docs/refs/valibot.md) を参照
+
+```ts
+// Example
+import * as v from 'valibot';
+
+// Create login schema with email and password
+const LoginSchema = v.object({
+  email: v.pipe(v.string(), v.email()),
+  password: v.pipe(v.string(), v.minLength(8)),
+});
+
+// Infer output TypeScript type of login schema as
+// { email: string; password: string }
+type LoginData = v.InferOutput<typeof LoginSchema>;
+
+// Throws error for email and password
+const output1 = v.parse(LoginSchema, { email: '', password: '' });
+
+// Returns data as { email: string; password: string }
+const output2 = v.parse(LoginSchema, {
+  email: 'jane@example.com',
+  password: '12345678',
+});
+```
+
 
 ## テスト基準
 
