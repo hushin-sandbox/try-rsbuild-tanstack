@@ -105,6 +105,10 @@ const output2 = v.parse(LoginSchema, {
 必要に応じて `pnpm dlx shadcn@latest add (name)` でインストールして使ってください。
 詳しくは [document](docs/refs/shadcn-ui.md) を参照
 
+### storybook, mock の使用
+
+[document](docs/refs/storybook.md) を参照
+
 ## テスト基準
 
 - ビジネスロジックには単体テストを必須とする

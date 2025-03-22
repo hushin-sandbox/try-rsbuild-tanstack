@@ -28,9 +28,7 @@ export const Default: Story = {
 export const Loading: Story = {
   parameters: {
     msw: {
-      handlers: [
-        // MSW のハンドラーを定義
-      ],
+      handlers: [handlers.loading],
     },
   },
 };
@@ -38,46 +36,87 @@ export const Loading: Story = {
 
 ## MSW の使い方
 
-### handlers の定義
+### 共通ハンドラーの定義
+
+src/mocks/handlers/common.ts
+
+### モックハンドラーの定義
 
 ```typescript
-// src/mocks/data/tasks.ts などにモックデータを定義
-export const sampleTasks = [
-  {
-    id: '1',
-    title: 'サンプルタスク',
-    // ...
-  },
-];
-
-// stories ファイルで使用
+// [component-name].mocks.ts
 import { http, HttpResponse } from 'msw';
-import { sampleTasks } from '~/mocks/data/tasks';
+import { sampleData } from '~/mocks/data';
+import { createLoadingHandler, createErrorHandler } from '~/mocks/handlers/common';
 
-const handlers = [
-  http.get('/api/tasks', () => {
+const API_PATH = '/api/endpoint';
+
+export const handlers = {
+  // 正常系
+  default: http.get(API_PATH, () => {
     return HttpResponse.json({
-      data: { tasks: sampleTasks },
+      data: { items: sampleData },
       status: 200,
     });
   }),
-];
+
+  // ローディング状態
+  loading: createLoadingHandler(API_PATH),
+
+  // データが空の状態
+  empty: http.get(API_PATH, () => {
+    return HttpResponse.json({
+      data: { items: [] },
+      status: 200,
+    });
+  }),
+
+  // エラー状態
+  error: createErrorHandler(API_PATH),
+};
 ```
 
 ### Story での使用
 
 ```typescript
-export const WithData: Story = {
+import type { Meta, StoryObj } from '@storybook/react';
+import { handlers } from './component-name.mocks';
+import { Component } from './Component';
+
+const meta = {
+  component: Component,
+} satisfies Meta<typeof Component>;
+
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const Default: Story = {
   parameters: {
     msw: {
-      handlers: [
-        http.get('/api/tasks', () => {
-          return HttpResponse.json({
-            data: { tasks: sampleTasks },
-            status: 200,
-          });
-        }),
-      ],
+      handlers: [handlers.default],
+    },
+  },
+};
+
+export const Loading: Story = {
+  parameters: {
+    msw: {
+      handlers: [handlers.loading],
+    },
+  },
+};
+
+export const Empty: Story = {
+  parameters: {
+    msw: {
+      handlers: [handlers.empty],
+    },
+  },
+};
+
+export const ErrorCase: Story = {
+  parameters: {
+    msw: {
+      handlers: [handlers.error],
     },
   },
 };
@@ -86,21 +125,21 @@ export const WithData: Story = {
 ## ベストプラクティス
 
 1. ストーリーの命名
-   - Default: 基本的な使用方法
-   - WithData: データがある状態
+   - Default: 基本的な使用方法（正常系）
    - Loading: ローディング状態
    - Empty: データが空の状態
-   - Error: エラー状態
+   - ErrorCase: エラー状態
 
-2. モックデータの管理
-   - モックデータは別ファイルに分離
-   - 再利用可能な形で定義
-   - 現実的なデータを用意
+2. モックの構造化
+   - 共通ハンドラー（Loading, Error）は `src/mocks/handlers/common.ts` に定義
+   - コンポーネント固有のモックは `[component-name].mocks.ts` に定義
+   - APIパスは定数として管理
 
 3. MSW の使用
-   - グローバルハンドラーは preview.ts に定義
-   - ストーリー固有のハンドラーは Story の parameters に定義
+   - 共通ハンドラーを活用して重複を排除
+   - コンポーネント固有のモックは専用ファイルに分離
    - エラーケースも考慮
+   - デフォルトのモックハンドラーは避け、各ストーリーで明示的に設定
 
 4. コンポーネントのドキュメント
    - コンポーネントの説明を含める
