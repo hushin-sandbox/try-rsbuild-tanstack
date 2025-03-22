@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useAppForm } from '~shared/lib/form';
+import * as v from 'valibot';
+import { useAppForm } from '../shared/lib/form';
 import {
   Form,
   FormControl,
@@ -8,32 +9,36 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '~shared/ui/form';
-import { Input } from '~shared/ui/input';
+} from '../shared/ui/form';
+import { Input } from '../shared/ui/input';
 
-type FormValues = {
-  [K in 'name']: string;
-};
+const formSchema = v.object({
+  name: v.pipe(
+    v.string(),
+    v.minLength(3, 'お名前は3文字以上で入力してください'),
+  ),
+});
 
 function FormTest() {
-  const form = useAppForm<FormValues>({
+  const form = useAppForm({
     defaultValues: {
       name: '',
     },
     validators: {
-      onChange: ({ value }) => {
-        if (!value.name) {
-          return { name: '名前は必須です' };
-        }
-        if (value.name.length < 3) {
-          return { name: '名前は3文字以上で入力してください' };
-        }
-        return undefined;
-      },
+      onChange: formSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
-      alert(`送信しました: ${JSON.stringify(value)}`);
+      try {
+        const validated = v.parse(formSchema, value);
+        console.log(validated);
+        alert(`送信しました: ${JSON.stringify(validated)}`);
+      } catch (error) {
+        if (error instanceof v.ValiError) {
+          console.error('Validation error:', error.issues);
+          return;
+        }
+        console.error('Unknown error:', error);
+      }
     },
   });
 

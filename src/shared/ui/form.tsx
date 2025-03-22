@@ -29,7 +29,7 @@ const FormItemContext = React.createContext<FormItemContextValue>(
   {} as FormItemContextValue,
 );
 
-function FormField<TValue>({
+function FormField({
   name,
   children,
 }: {
@@ -130,7 +130,7 @@ function FormMessage({
   ...props
 }: React.ComponentProps<'p'>) {
   const { formMessageId, errors } = useFormField();
-  const body = errors.length > 0 ? errors[0] : children;
+  const body = errors.length > 0 ? errors[0].message : children;
 
   if (!body) {
     return null;
