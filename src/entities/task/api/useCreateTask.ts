@@ -37,11 +37,50 @@ export function useCreateTask() {
 
   return useMutation({
     mutationFn: createTask,
-    onSuccess: () => {
-      // タスク一覧のキャッシュを更新
-      queryClient.invalidateQueries({
-        queryKey: ['tasks'],
+    // 楽観的更新の実装
+    onMutate: async (newTask) => {
+      // 既存のクエリをキャンセル
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+
+      // 以前のタスク一覧を保存
+      const previousTasks = queryClient.getQueryData(['tasks']) as Task[];
+
+      // 新しいタスクを一時的に追加
+      const tempTask: Task = {
+        ...newTask,
+        id: `temp-${Date.now()}`, // 一時的なID
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        completedAt: newTask.isCompleted ? new Date().toISOString() : undefined,
+      };
+
+      // キャッシュを更新
+      queryClient.setQueryData(['tasks'], (old: Task[] | undefined) => {
+        return old ? [tempTask, ...old] : [tempTask];
       });
+
+      // コンテキストを返す
+      return { previousTasks };
+    },
+    // サーバーからの応答で実際のデータに更新
+    onSuccess: (newTask, _, context) => {
+      queryClient.setQueryData(['tasks'], (old: Task[] | undefined) => {
+        if (!old) return [newTask];
+        // 一時的なタスクを実際のタスクに置き換え
+        return old.map((task) =>
+          task.id.startsWith('temp-') ? newTask : task,
+        );
+      });
+    },
+    // エラー時にロールバック
+    onError: (_, __, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(['tasks'], context.previousTasks);
+      }
+    },
+    // 完了時にクエリを再検証
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
 }

@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Suspense } from 'react';
 
+import { TaskCreateModal } from '~/entities/task/ui/task-create-modal';
 import { TaskList } from '~/entities/task/ui/task-list';
-import { Button } from '~/shared/ui/button';
 import {
   Card,
   CardContent,
@@ -34,7 +34,7 @@ function HomeComponent() {
             </Suspense>
           </CardContent>
           <CardFooter>
-            <Button>新規タスク作成</Button>
+            <TaskCreateModal />
           </CardFooter>
         </Card>
       </div>
