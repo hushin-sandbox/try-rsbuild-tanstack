@@ -1,12 +1,22 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useAppForm } from '../shared/lib/form';
+import { useAppForm } from '~shared/lib/form';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '~shared/ui/form';
+import { Input } from '~shared/ui/input';
 
-interface FormValues {
-  name: string;
-}
+type FormValues = {
+  [K in 'name']: string;
+};
 
 function FormTest() {
-  const form = useAppForm({
+  const form = useAppForm<FormValues>({
     defaultValues: {
       name: '',
     },
@@ -30,7 +40,7 @@ function FormTest() {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">フォームテスト</h1>
-      <form
+      <Form
         onSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
@@ -38,7 +48,22 @@ function FormTest() {
         className="space-y-4"
       >
         <form.AppField name="name">
-          {(field) => <field.TextField label="名前" />}
+          {(field) => (
+            <FormField name={field.name}>
+              <FormItem>
+                <FormLabel>名前</FormLabel>
+                <FormControl>
+                  <Input
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={field.handleBlur}
+                  />
+                </FormControl>
+                <FormDescription>3文字以上で入力してください</FormDescription>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+          )}
         </form.AppField>
 
         <div>
@@ -50,7 +75,7 @@ function FormTest() {
             送信
           </button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }
