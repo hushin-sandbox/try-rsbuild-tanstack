@@ -9,6 +9,7 @@
     "dev": "rsbuild dev --open",
     "format": "biome format --write",
     "preview": "rsbuild preview",
+    "storybook": "storybook dev -p 6006",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
@@ -36,6 +37,9 @@
     "@biomejs/biome": "^1.9.4",
     "@rsbuild/core": "^1.2.16",
     "@rsbuild/plugin-react": "^1.1.1",
+    "@storybook/blocks": "^8.6.7",
+    "@storybook/react": "^8.6.7",
+    "@storybook/test": "^8.6.7",
     "@tailwindcss/postcss": "^4.0.14",
     "@tanstack/router-plugin": "^1.114.25",
     "@testing-library/jest-dom": "^6.6.3",
