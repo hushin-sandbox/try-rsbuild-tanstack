@@ -1,214 +1,215 @@
-# Form Migration Plan: react-hook-form から TanStack Form への移行
+# Form Migration Plan: react-hook-form から TanStack Form への移行 (更新版)
 
 src/shared/ui/form.tsx のリファクタリング
 
-## 現状分析
+## アーキテクチャの決定
 
-### 既存のコンポーネント構造
-
-```tsx
-Form (FormProvider)
-└── FormField (Controller)
-    └── FormItem
-        ├── FormLabel
-        ├── FormControl
-        ├── FormDescription
-        └── FormMessage
-```
-
-### 各コンポーネントの役割
-
-1. **Form (FormProvider)**
-   - フォームコンテキストの提供
-   - フォーム全体の状態管理
-
-2. **FormField (Controller)**
-   - フィールドの制御
-   - フィールドコンテキストの提供
-   - バリデーション状態の管理
-
-3. **FormItem**
-   - フィールドのラッパー
-   - スタイリングとレイアウト
-   - 一意のID生成と提供
-
-4. **FormLabel**
-   - アクセシブルなラベル
-   - エラー状態の視覚的フィードバック
-
-5. **FormControl**
-   - 入力要素のラッパー
-   - アクセシビリティ属性の提供
-   - エラー状態の管理
-
-6. **FormDescription**
-   - フィールドの説明文
-   - アクセシビリティ対応
-
-7. **FormMessage**
-   - エラーメッセージの表示
-   - エラー状態の視覚的フィードバック
-
-## TanStack Form での実装計画
-
-### 1. フォームコンテキストの作成
+### 1. カスタムフォームフック作成
 
 ```typescript
 // src/shared/lib/form-context.ts
-import { createFormHookContexts } from '@tanstack/react-form';
+import { createFormHookContexts } from '@tanstack/react-form'
 
 export const {
   fieldContext,
   formContext,
   useFieldContext,
   useFormContext,
-} = createFormHookContexts();
+} = createFormHookContexts()
 ```
 
-### 2. 基本コンポーネントの再実装
+### 2. UI コンポーネントの設計
 
 ```typescript
-// src/shared/ui/form.tsx
-import { Field, useField } from '@tanstack/react-form';
-import type { FieldApi } from '@tanstack/form-core';
+// src/shared/ui/form/field.tsx
+import { useFieldContext } from '~/shared/lib/form-context'
+import type { AnyFieldApi } from '@tanstack/react-form'
 
-// Form コンポーネント
-export const Form = ({ children, ...props }) => (
-  <form {...props}>{children}</form>
-);
+export interface FormFieldProps {
+  name: string
+  label?: string
+  description?: string
+  error?: string
+  children: React.ReactNode
+}
 
-// FormField コンポーネント
-export const FormField = ({ name, children }) => (
-  <Field name={name}>
-    {(field) => children({ field })}
-  </Field>
-);
-
-// 既存のコンポーネントを TanStack Form 対応に修正
-export const FormItem = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
-  const id = React.useId();
+// FormField のラッパーコンポーネント
+export function FormField({ label, error, description, ...props }: FormFieldProps) {
   return (
-    <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn('space-y-2', className)} {...props} />
-    </FormItemContext.Provider>
-  );
-});
+    <FormItem>
+      {label && <FormLabel>{label}</FormLabel>}
+      {props.children}
+      {description && <FormDescription>{description}</FormDescription>}
+      {error && <FormMessage>{error}</FormMessage>}
+    </FormItem>
+  )
+}
 
-// その他のコンポーネントも同様に修正
+// 各フィールドタイプのコンポーネント
+export function TextField({ label }: { label: string }) {
+  const field = useFieldContext<string>()
+  
+  return (
+    <FormField label={label}>
+      <FormControl>
+        <Input
+          value={field.state.value}
+          onChange={e => field.handleChange(e.target.value)}
+          onBlur={field.handleBlur}
+        />
+      </FormControl>
+    </FormField>
+  )
+}
+
+// その他のフィールドタイプも同様に実装
 ```
 
-### 3. フィールドコンポーネントの使用例
+### 3. カスタムフォームフックの作成
 
 ```typescript
-const MyForm = () => {
-  const form = useForm({
+// src/shared/lib/form.ts
+import { createFormHook } from '@tanstack/react-form'
+import { TextField, SelectField, TextareaField } from '~/shared/ui/form/field'
+import { fieldContext, formContext } from './form-context'
+
+export const { useAppForm, withForm } = createFormHook({
+  fieldComponents: {
+    TextField,
+    SelectField,
+    TextareaField,
+  },
+  formComponents: {
+    SubmitButton,
+  },
+  fieldContext,
+  formContext,
+})
+```
+
+### 4. フォームの使用例
+
+```typescript
+function TaskForm() {
+  const form = useAppForm({
     defaultValues: {
-      name: '',
+      title: '',
+      description: '',
+      status: 'todo',
     },
-    onSubmit: async (values) => {
-      // ...
+    onSubmit: async ({ value }) => {
+      // 送信処理
     },
-  });
+  })
 
   return (
-    <form.Form>
-      <FormField name="name">
-        {(field) => (
-          <FormItem>
-            <FormLabel>Name</FormLabel>
-            <FormControl>
-              <Input
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormControl>
-            {field.state.meta.errors ? (
-              <FormMessage>{field.state.meta.errors[0]}</FormMessage>
-            ) : (
-              <FormDescription>Enter your name</FormDescription>
-            )}
-          </FormItem>
+    <form
+      className="space-y-4"
+      onSubmit={(e) => {
+        e.preventDefault()
+        form.handleSubmit()
+      }}
+    >
+      <form.AppField
+        name="title"
+        children={(field) => (
+          <field.TextField
+            label="タイトル"
+          />
         )}
-      </FormField>
-    </form.Form>
-  );
-};
+      />
+      
+      <form.AppField
+        name="description"
+        children={(field) => (
+          <field.TextareaField
+            label="説明"
+          />
+        )}
+      />
+      
+      <form.AppField
+        name="status"
+        children={(field) => (
+          <field.SelectField
+            label="ステータス"
+            options={[
+              { value: 'todo', label: 'Todo' },
+              { value: 'done', label: 'Done' },
+            ]}
+          />
+        )}
+      />
+      
+      <form.AppForm>
+        <form.SubmitButton>保存</form.SubmitButton>
+      </form.AppForm>
+    </form>
+  )
+}
 ```
 
-## 移行手順
+## 移行手順の更新
 
-1. **準備フェーズ**
+1. 準備フェーズ
    - [x] 現状分析
    - [x] 移行計画の作成
-   - [ ] TanStack Form の依存関係追加
-
-2. **基盤実装**
+   - [x] TanStack Form の依存関係追加
+   
+2. フォーム基盤の実装
    - [ ] フォームコンテキストの作成
-   - [ ] 基本コンポーネントの実装
-   - [ ] ユーティリティ関数の実装
+   - [ ] フィールドコンポーネントの実装
+   - [ ] フォームコンポーネントの実装
+   - [ ] カスタムフォームフックの作成
 
-3. **コンポーネント移行**
-   - [ ] Form コンポーネントの実装
-   - [ ] FormField の移行
+3. 既存コンポーネントの置き換え
    - [ ] FormItem の調整
-   - [ ] その他のコンポーネントの移行
+   - [ ] FormField の実装
+   - [ ] 各フィールドタイプの実装
+   - [ ] フォームのバリデーション移行
+   - [ ] react-hook-form, zod, @hookform/resolvers のアンイストール
 
-4. **バリデーション実装**
-   - [ ] バリデーションルールの移行
-   - [ ] エラーハンドリングの実装
-   - [ ] フィールドレベルのバリデーション
-   - [ ] フォームレベルのバリデーション
+4. テストとドキュメント
+   - [ ] 単体テストの作成
+   - [ ] フォームコンポーネントの型定義
+   - [ ] 使用例の追加
+   - [ ] ドキュメントの更新
 
-5. **テストと最適化**
-   - [ ] ユニットテストの作成
-   - [ ] 統合テストの作成
-   - [ ] パフォーマンス最適化
-   - [ ] アクセシビリティテスト
+## メリット
 
-## 技術的な考慮事項
+1. **型安全性の向上**
+   - フィールド名の自動補完
+   - フォーム値の型推論
+   - バリデーションエラーの型安全な扱い
 
-1. **型安全性**
-   - TanStack Form の型システムを活用
-   - カスタム型定義の作成
-   - 型推論の活用
+2. **コードの再利用性**
+   - カスタムフォームフックによる共通ロジックの共有
+   - 型定義の再利用
+   - UI コンポーネントの組み合わせ
 
-2. **パフォーマンス**
+3. **パフォーマンスの最適化**
    - 不要な再レンダリングの防止
-   - メモ化の適切な使用
-   - 状態更新の最適化
+   - バリデーションの効率化
+   - レンダリングの最適化
 
-3. **アクセシビリティ**
-   - ARIA属性の維持
-   - キーボード操作のサポート
-   - エラー通知の適切な実装
+4. **アクセシビリティの維持**
+   - 既存の UI コンポーネントの再利用
+   - アクセシビリティ属性の継承
+   - エラー通知の改善
 
-## リスクと対策
+## 注意点
 
-1. **互換性の問題**
-   - 既存のフォームコードとの互換性維持
-   - 段階的な移行の実施
-   - フォールバックの実装
+1. **段階的な移行**
+   - 既存のフォームを一つずつ移行
+   - テストカバレッジの維持
+   - 互換性の確保
 
-2. **パフォーマンスの低下**
-   - パフォーマンスモニタリング
-   - 必要に応じた最適化
-   - ベンチマークの実施
+2. **型定義の管理**
+   - フォーム値の型定義の整理
+   - バリデーションスキーマの移行
+   - 型エラーの解決
 
-3. **学習コスト**
-   - ドキュメントの整備
-   - サンプルコードの提供
-   - チームメンバーへの説明会実施
-
-## 次のステップ
-
-1. [ ] フォームコンテキストの実装開始
-2. [ ] 基本コンポーネントの移行
-3. [ ] サンプルフォームの作成とテスト
-4. [ ] ドキュメントの更新
-
-## 結論
-
-TanStack Form への移行は、型安全性の向上とパフォーマンスの最適化をもたらします。段階的な移行アプローチにより、リスクを最小限に抑えながら、モダンなフォーム実装を実現できます。
+3. **パフォーマンスモニタリング**
+   - レンダリング回数の監視
+   - メモリ使用量の確認
+   - バンドルサイズの管理
