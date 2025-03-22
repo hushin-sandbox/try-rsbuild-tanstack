@@ -4,9 +4,11 @@ import '../src/styles.css';
 
 import type { Preview } from '@storybook/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Providers } from '../src/shared/lib/providers';
+import { Providers, createQueryClient } from '../src/shared/lib/providers';
 
 initialize();
+
+const storybookQueryClient = createQueryClient({ retry: false });
 
 const ResetQueries = () => {
   const queryClient = useQueryClient();
@@ -25,7 +27,7 @@ const preview: Preview = {
 
   decorators: [
     (Story) => (
-      <Providers>
+      <Providers queryClient={storybookQueryClient}>
         <Story />
         <ResetQueries />
       </Providers>
