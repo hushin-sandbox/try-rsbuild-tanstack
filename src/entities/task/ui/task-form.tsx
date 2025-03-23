@@ -139,24 +139,24 @@ export function TaskForm({ onSubmit, onCancel }: TaskFormProps) {
           <FormField name={field.name}>
             <FormItem>
               <FormLabel>ステータス</FormLabel>
-              <FormControl>
-                <Select
-                  value={field.state.value}
-                  onValueChange={(value) =>
-                    field.handleChange(value as TaskStatus)
-                  }
-                  onOpenChange={() => field.handleBlur()}
-                >
+              <Select
+                value={field.state.value}
+                onValueChange={(value) =>
+                  field.handleChange(value as TaskStatus)
+                }
+                onOpenChange={() => field.handleBlur()}
+              >
+                <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="ステータスを選択" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="todo">未着手</SelectItem>
-                    <SelectItem value="in_progress">進行中</SelectItem>
-                    <SelectItem value="done">完了</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormControl>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="todo">未着手</SelectItem>
+                  <SelectItem value="in_progress">進行中</SelectItem>
+                  <SelectItem value="done">完了</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           </FormField>
@@ -169,24 +169,24 @@ export function TaskForm({ onSubmit, onCancel }: TaskFormProps) {
           <FormField name={field.name}>
             <FormItem>
               <FormLabel>優先度</FormLabel>
-              <FormControl>
-                <Select
-                  value={field.state.value}
-                  onValueChange={(value) =>
-                    field.handleChange(value as TaskPriority)
-                  }
-                  onOpenChange={() => field.handleBlur()}
-                >
+              <Select
+                value={field.state.value}
+                onValueChange={(value) =>
+                  field.handleChange(value as TaskPriority)
+                }
+                onOpenChange={() => field.handleBlur()}
+              >
+                <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="優先度を選択" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low">低</SelectItem>
-                    <SelectItem value="medium">中</SelectItem>
-                    <SelectItem value="high">高</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormControl>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="low">低</SelectItem>
+                  <SelectItem value="medium">中</SelectItem>
+                  <SelectItem value="high">高</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           </FormField>
