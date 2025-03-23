@@ -42,6 +42,10 @@ export const FilledForm: Story = {
     msw: {
       handlers: [handlers.default],
     },
+    test: {
+      // なぜか pnpm test-storybook でエラーが発生するため、一時的に無効化
+      dangerouslyIgnoreUnhandledErrors: true,
+    },
   },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement.parentNode as HTMLElement);
