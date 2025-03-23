@@ -29,8 +29,8 @@ describe('Task API Handlers', () => {
       const result = await response.json();
 
       expect(response.ok).toBe(true);
-      expect(result.status).toBe(200);
-      expect(result.data.tasks).toEqual([]);
+      expect(response.status).toBe(200);
+      expect(result.tasks).toEqual([]);
     });
   });
 
@@ -44,8 +44,8 @@ describe('Task API Handlers', () => {
       const result = await response.json();
 
       expect(response.ok).toBe(true);
-      expect(result.status).toBe(201);
-      expect(result.data.task).toMatchObject({
+      expect(response.status).toBe(201);
+      expect(result).toMatchObject({
         ...sampleTask,
         id: '00000000-0000-0000-0000-000000000000',
         createdAt: baseDate,
@@ -62,17 +62,15 @@ describe('Task API Handlers', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(sampleTask),
       });
-      const {
-        data: { task },
-      } = await createResponse.json();
+      const task = await createResponse.json();
 
       // 作成したタスクを取得
       const response = await fetch(`/api/tasks/${task.id}`);
       const result = await response.json();
 
       expect(response.ok).toBe(true);
-      expect(result.status).toBe(200);
-      expect(result.data.task).toEqual(task);
+      expect(response.status).toBe(200);
+      expect(result).toEqual(task);
     });
 
     it('存在しないタスクの場合404を返すこと', async () => {
@@ -93,9 +91,7 @@ describe('Task API Handlers', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(sampleTask),
       });
-      const {
-        data: { task },
-      } = await createResponse.json();
+      const task = await createResponse.json();
 
       // タスクを更新
       const updates = { title: '更新されたタスク', isCompleted: true };
@@ -107,8 +103,8 @@ describe('Task API Handlers', () => {
       const result = await response.json();
 
       expect(response.ok).toBe(true);
-      expect(result.status).toBe(200);
-      expect(result.data.task).toEqual({
+      expect(response.status).toBe(200);
+      expect(result).toEqual({
         ...task,
         ...updates,
         updatedAt: baseDate,
@@ -124,9 +120,7 @@ describe('Task API Handlers', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(sampleTask),
       });
-      const {
-        data: { task },
-      } = await createResponse.json();
+      const task = await createResponse.json();
 
       // タスクを削除
       const response = await fetch(`/api/tasks/${task.id}`, {

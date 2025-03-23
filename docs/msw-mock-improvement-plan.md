@@ -1,109 +1,113 @@
-# MSW モック改善計画
+# MSW モックレスポンス改善計画
 
-## 目的
-Storybookのmswモックを改善し、より保守性の高い実装にする
+## 現状の課題
 
-## 変更点
+1. レスポンスボディに HTTP ステータスを含めている
+   - REST API のプラクティスとして不適切
+   - ステータスは HTTP レスポンスヘッダーで表現すべき
+   - レスポンスボディに status を含めることで冗長な情報になっている
 
-### 1. タスク固有のモックの作成
-`src/entities/task/ui/task-list.mocks.ts` に以下のハンドラーを実装：
+2. レスポンス構造が複雑
+   - 不必要な `data` ラッパーを使用している
+   - REST API の原則であるシンプルさが損なわれている
+
+3. エラーレスポンスの構造が不適切
+   - エラーレスポンスにも status を含めている
+   - エラーメッセージの構造が統一されていない
+
+## 改善案
+
+### 1. レスポンス型の見直し
 
 ```typescript
-import { http, delay, HttpResponse } from 'msw';
-import { sampleTasks, emptyTasks } from '~/mocks/data';
+// Before
+type APIResponse<T> = {
+  data: T;
+  status: number;
+  message?: string;
+};
 
-// Loading状態のハンドラー
-const createLoadingHandler = () =>
-  http.get('/api/tasks', async () => {
-    await delay('infinite');
-    return new HttpResponse(null, { status: 200 });
-  });
+type TasksAPIResponse = APIResponse<{
+  tasks: Task[];
+}>;
 
-// エラー状態のハンドラー
-const createErrorHandler = (status = 500) =>
-  http.get('/api/tasks', () => {
-    return HttpResponse.json(
-      {
-        status,
-        message: 'Internal Server Error',
-      },
-      { status }
-    );
-  });
+// After
+type TasksResponse = {
+  tasks: Task[];
+};
 
-export const handlers = {
-  // 正常系（タスクあり）
-  default: http.get('/api/tasks', () => {
-    return HttpResponse.json({
-      data: { tasks: sampleTasks },
-      status: 200,
-    });
-  }),
+type TaskResponse = Task;
 
-  // ローディング状態
-  loading: createLoadingHandler(),
-
-  // タスクが空の状態
-  empty: http.get('/api/tasks', () => {
-    return HttpResponse.json({
-      data: { tasks: emptyTasks },
-      status: 200,
-    });
-  }),
-
-  // エラー状態
-  error: createErrorHandler(),
+// エラーレスポンス
+type APIErrorResponse = {
+  message: string;
+  errors?: Record<string, string[]>;
 };
 ```
 
-### 2. Storybookの改善
-`src/entities/task/ui/task-list.stories.tsx` を以下のように修正：
+### 2. レスポンスの実装方針
 
-```typescript
-import type { Meta, StoryObj } from '@storybook/react';
-import { handlers } from './task-list.mocks';
-import { TaskList } from './task-list';
+1. 成功レスポンス（2xx）
+   - リソースを直接返す（`data` ラッパーなし）
+   - HTTP ステータスコードで状態を表現
+   - 例：
+     ```typescript
+     // リソースの配列を返す場合
+     return HttpResponse.json({ tasks }, { status: 200 });
+     
+     // 単一のリソースを返す場合
+     return HttpResponse.json(task, { status: 200 });
+     ```
 
-const meta = {
-  component: TaskList,
-} satisfies Meta<typeof TaskList>;
+2. エラーレスポンス（4xx, 5xx）
+   - エラーメッセージと必要に応じてバリデーションエラーを含める
+   - HTTP ステータスコードでエラー種別を表現
+   - 例：
+     ```typescript
+     return HttpResponse.json(
+       { message: 'タスクが見つかりません' },
+       { status: 404 }
+     );
+     ```
 
-export default meta;
-type Story = StoryObj<typeof TaskList>;
+## 実装手順
 
-export const Default: Story = {
-  parameters: {
-    msw: {
-      handlers: [handlers.default],
-    },
-  },
-};
+1. 型定義の変更（src/mocks/lib/types.ts）
+   - 新しいレスポンス型の定義
+   - 古い型の削除
 
-export const Loading: Story = {
-  parameters: {
-    msw: {
-      handlers: [handlers.loading],
-    },
-  },
-};
+2. ハンドラーの実装更新（src/mocks/handlers.ts）
+   - レスポンス構造の簡素化
+   - HTTP ステータスコードの適切な使用
 
-export const Empty: Story = {
-  parameters: {
-    msw: {
-      handlers: [handlers.empty],
-    },
-  },
-};
+3. クライアント側の修正
+   - レスポンス処理の更新
+   - 型定義の更新
 
-export const ErrorCase: Story = {
-  parameters: {
-    msw: {
-      handlers: [handlers.error],
-    },
-  },
-};
-```
+4. テストの更新
+   - モックレスポンスの構造変更に合わせた更新
+   - エラーケースのテスト調整
 
-## 利点
-1. モックの再利用性が向上
-2. コードの重複が減少
+## 注意事項
+
+- この変更はクライアント側のコードに影響を与える
+- 段階的な移行が必要な場合は、一時的に両方の形式をサポートすることも検討
+- 特にタイプ定義の変更は慎重に行う
+
+## 期待される効果
+
+1. REST API のベストプラクティスに準拠
+   - シンプルなレスポンス構造
+   - 適切な HTTP ステータスコードの使用
+
+2. 保守性の向上
+   - 不要なネストの削除
+   - 明確なレスポンス構造
+
+3. クライアント側での扱いやすさの向上
+   - シンプルなデータアクセス
+   - 型安全性の向上
+
+4. エラーハンドリングの一貫性向上
+   - 統一されたエラーレスポンス形式
+   - 明確なエラー情報の提供

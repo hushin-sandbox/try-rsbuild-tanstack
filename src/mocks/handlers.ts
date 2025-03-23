@@ -3,21 +3,13 @@ import type { NewTask, Task } from '~/entities/task/model/task';
 import { createTask } from '~/entities/task/model/task';
 import { API_ERROR_MESSAGES } from './lib/errors';
 import { storageAdapter } from './lib/storage';
-import type {
-  APIErrorResponse,
-  TaskAPIResponse,
-  TasksAPIResponse,
-} from './lib/types';
+import type { APIErrorResponse } from './lib/types';
 
 export const handlers = [
   // タスク一覧取得
   http.get('/api/tasks', () => {
     const tasks = storageAdapter.getTasks();
-    const response: TasksAPIResponse = {
-      data: { tasks },
-      status: 200,
-    };
-    return HttpResponse.json(response);
+    return HttpResponse.json({ tasks }, { status: 200 });
   }),
 
   // タスク詳細取得
@@ -25,16 +17,11 @@ export const handlers = [
     const task = storageAdapter.getTask(params.id as string);
     if (!task) {
       const errorResponse: APIErrorResponse = {
-        status: 404,
         message: API_ERROR_MESSAGES.NOT_FOUND,
       };
       return HttpResponse.json(errorResponse, { status: 404 });
     }
-    const response: TaskAPIResponse = {
-      data: { task },
-      status: 200,
-    };
-    return HttpResponse.json(response);
+    return HttpResponse.json(task, { status: 200 });
   }),
 
   // タスク作成
@@ -42,12 +29,7 @@ export const handlers = [
     const newTask = (await request.json()) as NewTask;
     const task = createTask(newTask);
     storageAdapter.saveTask(task);
-    const response: TaskAPIResponse = {
-      data: { task },
-      status: 201,
-      message: 'タスクが作成されました',
-    };
-    return HttpResponse.json(response, { status: 201 });
+    return HttpResponse.json(task, { status: 201 });
   }),
 
   // タスク更新
@@ -55,7 +37,6 @@ export const handlers = [
     const task = storageAdapter.getTask(params.id as string);
     if (!task) {
       const errorResponse: APIErrorResponse = {
-        status: 404,
         message: API_ERROR_MESSAGES.NOT_FOUND,
       };
       return HttpResponse.json(errorResponse, { status: 404 });
@@ -68,13 +49,7 @@ export const handlers = [
       updatedAt: new Date().toISOString(),
     };
     storageAdapter.saveTask(updatedTask);
-
-    const response: TaskAPIResponse = {
-      data: { task: updatedTask },
-      status: 200,
-      message: 'タスクが更新されました',
-    };
-    return HttpResponse.json(response);
+    return HttpResponse.json(updatedTask, { status: 200 });
   }),
 
   // タスク削除
@@ -82,7 +57,6 @@ export const handlers = [
     const task = storageAdapter.getTask(params.id as string);
     if (!task) {
       const errorResponse: APIErrorResponse = {
-        status: 404,
         message: API_ERROR_MESSAGES.NOT_FOUND,
       };
       return HttpResponse.json(errorResponse, { status: 404 });
