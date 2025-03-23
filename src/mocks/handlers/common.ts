@@ -1,9 +1,10 @@
-import { delay, http, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
+import { customDelay } from '../lib/delay';
 
 // Loading状態のGETハンドラー
 export const createLoadingHandlerGet = (path: string) =>
   http.get(path, async () => {
-    await delay('infinite');
+    await customDelay('infinite');
     return new HttpResponse(null, { status: 200 });
   });
 
@@ -22,7 +23,7 @@ export const createErrorHandlerGet = (path: string, status = 500) =>
 // Loading状態のPOSTハンドラー
 export const createLoadingHandlerPost = (path: string) =>
   http.post(path, async () => {
-    await delay('infinite');
+    await customDelay('infinite');
     return new HttpResponse(null, { status: 200 });
   });
 

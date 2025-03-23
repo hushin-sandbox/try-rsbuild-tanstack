@@ -2,7 +2,7 @@
 
 declare global {
   interface ImportMetaEnv {
-    readonly MODE: 'development' | 'production';
+    readonly MODE: 'development' | 'production' | 'test';
   }
 
   interface ImportMeta {

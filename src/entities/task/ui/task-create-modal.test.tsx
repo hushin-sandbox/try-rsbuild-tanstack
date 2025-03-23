@@ -41,9 +41,6 @@ describe('TaskCreateModal', () => {
       'テストの説明',
     );
 
-    // フォームの送信
-    await user.click(screen.getByRole('button', { name: '作成' }));
-
     // フォームを送信
     await user.click(screen.getByRole('button', { name: '作成' }));
 
