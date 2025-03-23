@@ -12,8 +12,12 @@ import { useCreateTask } from '../api/useCreateTask';
 import type { NewTask } from '../model/task';
 import { TaskForm } from './task-form';
 
-export function TaskCreateModal() {
-  const [open, setOpen] = useState(false);
+interface TaskCreateModalProps {
+  defaultOpen?: boolean;
+}
+
+export function TaskCreateModal({ defaultOpen = false }: TaskCreateModalProps) {
+  const [open, setOpen] = useState(defaultOpen);
   const createTaskMutation = useCreateTask();
 
   const handleSubmit = async (newTask: NewTask) => {
