@@ -46,6 +46,7 @@
     "@storybook/test": "^8.6.7",
     "@storybook/test-runner": "^0.22.0",
     "@tailwindcss/postcss": "^4.0.14",
+    "@tailwindcss/typography": "^0.5.16",
     "@tanstack/router-plugin": "^1.114.25",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
@@ -64,9 +65,13 @@
   },
   "packageManager": "pnpm@10.6.1+sha512.40ee09af407fa9fbb5fbfb8e1cb40fbb74c0af0c3e10e9224d7b53c7658528615b2c92450e74cfad91e3a2dcafe3ce4050d80bda71d757756d2ce2b66213e9a3",
   "pnpm": {
-    "onlyBuiltDependencies": ["msw"]
+    "onlyBuiltDependencies": [
+      "msw"
+    ]
   },
   "msw": {
-    "workerDirectory": ["public"]
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
