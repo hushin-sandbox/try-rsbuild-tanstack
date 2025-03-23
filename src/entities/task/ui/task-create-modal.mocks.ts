@@ -1,5 +1,5 @@
 import { delay, http, HttpResponse } from 'msw';
-import { createErrorHandler } from '~/mocks/handlers/common';
+import { createErrorHandlerPost } from '~/mocks/handlers/common';
 
 const API_PATH = '/api/tasks';
 
@@ -11,5 +11,5 @@ export const handlers = {
   }),
 
   // エラー状態
-  error: createErrorHandler(API_PATH),
+  error: createErrorHandlerPost(API_PATH),
 };

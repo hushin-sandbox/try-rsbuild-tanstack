@@ -1,8 +1,8 @@
 import { http, HttpResponse } from 'msw';
 import { emptyTasks, sampleTasks } from '~/mocks/data';
 import {
-  createErrorHandler,
-  createLoadingHandler,
+  createErrorHandlerGet,
+  createLoadingHandlerGet,
 } from '~/mocks/handlers/common';
 
 const TASKS_API_PATH = '/api/tasks';
@@ -17,7 +17,7 @@ export const handlers = {
   }),
 
   // ローディング状態
-  loading: createLoadingHandler(TASKS_API_PATH),
+  loading: createLoadingHandlerGet(TASKS_API_PATH),
 
   // タスクが空の状態
   empty: http.get(TASKS_API_PATH, () => {
@@ -28,5 +28,5 @@ export const handlers = {
   }),
 
   // エラー状態
-  error: createErrorHandler(TASKS_API_PATH),
+  error: createErrorHandlerGet(TASKS_API_PATH),
 };
