@@ -12,7 +12,8 @@
     "storybook": "storybook dev -p 6006",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test-storybook": "test-storybook"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",
@@ -38,9 +39,11 @@
     "@rsbuild/core": "^1.2.16",
     "@rsbuild/plugin-react": "^1.1.1",
     "@storybook/addon-essentials": "8.6.7",
+    "@storybook/addon-interactions": "^8.6.8",
     "@storybook/blocks": "^8.6.7",
     "@storybook/react": "^8.6.7",
     "@storybook/test": "^8.6.7",
+    "@storybook/test-runner": "^0.22.0",
     "@tailwindcss/postcss": "^4.0.14",
     "@tanstack/router-plugin": "^1.114.25",
     "@testing-library/jest-dom": "^6.6.3",

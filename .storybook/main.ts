@@ -12,7 +12,7 @@ function getAbsolutePath(value: string) {
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.tsx'],
   staticDirs: ['../public'],
-  addons: ['@storybook/addon-essentials'],
+  addons: ['@storybook/addon-essentials', '@storybook/addon-interactions'],
   framework: {
     name: getAbsolutePath(
       'storybook-react-rsbuild',
