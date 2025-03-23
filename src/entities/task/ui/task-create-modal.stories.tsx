@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { TaskCreateModal } from './task-create-modal';
 import { handlers } from './task-create-modal.mocks';
 
@@ -73,7 +73,15 @@ export const FilledForm: Story = {
     });
 
     await step('モーダルが閉じることを確認', async () => {
-      await expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
+      await waitFor(
+        () => {
+          expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
+        },
+        {
+          // タイムアウトを適切に設定（デフォルトは1000ms）
+          timeout: 2000,
+        },
+      );
     });
   },
 };
@@ -121,7 +129,15 @@ export const CancelOperation: Story = {
     });
 
     await step('モーダルが閉じることを確認', async () => {
-      await expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
+      await waitFor(
+        () => {
+          expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
+        },
+        {
+          // タイムアウトを適切に設定（デフォルトは1000ms）
+          timeout: 2000,
+        },
+      );
     });
   },
 };
