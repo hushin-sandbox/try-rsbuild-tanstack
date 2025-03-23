@@ -14,7 +14,7 @@ export function createQueryClient(options?: QueryClientOptions) {
       queries: {
         staleTime: 60 * 1000, // 1 minute
         // Suspense モードではエラー時のみ ErrorBoundary にスローします
-        throwOnError: (error, query) => {
+        throwOnError: (_error, query) => {
           return typeof query.state.data === 'undefined';
         },
         retry: options?.retry ?? true,

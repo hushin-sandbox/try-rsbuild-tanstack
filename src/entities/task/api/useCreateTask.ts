@@ -51,7 +51,7 @@ export function useCreateTask() {
       return { previousTasks };
     },
     // サーバーからの応答で実際のデータに更新
-    onSuccess: (newTask, _, context) => {
+    onSuccess: (newTask, _, _context) => {
       queryClient.setQueryData(['tasks'], (old: Task[] | undefined) => {
         if (!old) return [newTask];
         // 一時的なタスクを実際のタスクに置き換え
