@@ -46,7 +46,7 @@ src/mocks/handlers/common.ts
 // [component-name].mocks.ts
 import { http, HttpResponse } from 'msw';
 import { sampleData } from '~/mocks/data';
-import { createLoadingHandler, createErrorHandler } from '~/mocks/handlers/common';
+import { createLoadingHandlerGet, createErrorHandlerGet } from '~/mocks/handlers/common';
 
 const API_PATH = '/api/endpoint';
 
@@ -60,7 +60,7 @@ export const handlers = {
   }),
 
   // ローディング状態
-  loading: createLoadingHandler(API_PATH),
+  loading: createLoadingHandlerGet(API_PATH),
 
   // データが空の状態
   empty: http.get(API_PATH, () => {
@@ -71,7 +71,7 @@ export const handlers = {
   }),
 
   // エラー状態
-  error: createErrorHandler(API_PATH),
+  error: createErrorHandlerGet(API_PATH),
 };
 ```
 
