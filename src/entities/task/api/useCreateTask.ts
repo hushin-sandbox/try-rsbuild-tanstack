@@ -1,18 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { NewTask, Task } from '../model/task';
-
-interface TaskAPIResponse {
-  data: {
-    task: Task;
-  };
-  status: number;
-  message?: string;
-}
-
-interface APIErrorResponse {
-  status: number;
-  message: string;
-}
+import type { APIErrorResponse, TaskResponse } from './types';
 
 async function createTask(newTask: NewTask): Promise<Task> {
   const response = await fetch('/api/tasks', {
@@ -28,8 +16,8 @@ async function createTask(newTask: NewTask): Promise<Task> {
     throw new Error(errorData.message || 'タスクの作成に失敗しました');
   }
 
-  const data = (await response.json()) as TaskAPIResponse;
-  return data.data.task;
+  const data = (await response.json()) as TaskResponse;
+  return data;
 }
 
 export function useCreateTask() {

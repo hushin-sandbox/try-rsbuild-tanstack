@@ -1,9 +1,9 @@
 import { http, HttpResponse } from 'msw';
+import type { APIErrorResponse } from '~/entities/task/api/types';
 import type { NewTask, Task } from '~/entities/task/model/task';
 import { createTask } from '~/entities/task/model/task';
 import { API_ERROR_MESSAGES } from './lib/errors';
 import { storageAdapter } from './lib/storage';
-import type { APIErrorResponse } from './lib/types';
 
 export const handlers = [
   // タスク一覧取得
