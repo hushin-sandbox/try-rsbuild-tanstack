@@ -60,11 +60,11 @@ export const FilledForm: Story = {
       await userEvent.click(
         canvas.getByRole('combobox', { name: 'ステータス' }),
       );
-      await userEvent.click(canvas.getByText('進行中'));
+      await userEvent.click(canvas.getByRole('option', { name: '進行中' }));
 
       // 優先度選択
       await userEvent.click(canvas.getByRole('combobox', { name: '優先度' }));
-      await userEvent.click(canvas.getByText('高'));
+      await userEvent.click(canvas.getByRole('option', { name: '高' }));
     });
 
     await step('フォームを送信', async () => {
@@ -88,7 +88,7 @@ export const ValidationError: Story = {
     },
   },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.parentNode as HTMLElement);
 
     await step('空のフォームを送信', async () => {
       // 空のタイトルで送信を試みる
@@ -107,7 +107,7 @@ export const CancelOperation: Story = {
     defaultOpen: true,
   },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.parentNode as HTMLElement);
 
     await step('フォームに値を入力', async () => {
       await userEvent.type(
