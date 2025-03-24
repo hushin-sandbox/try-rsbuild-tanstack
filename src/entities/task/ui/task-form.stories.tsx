@@ -19,7 +19,7 @@ export const Default: Story = {};
 // マークダウン入力とプレビュー
 export const WithMarkdown: Story = {
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.parentNode as HTMLElement);
 
     await step('マークダウンテキストを入力', async () => {
       const textarea = canvas.getByLabelText('説明');
@@ -37,7 +37,7 @@ export const WithMarkdown: Story = {
       expect(preview).toBeInTheDocument();
 
       const boldText = canvas.getByText('重要な項目');
-      expect(boldText).toHaveStyle({ 'font-weight': 'bold' });
+      expect(boldText).toHaveStyle({ 'font-weight': 600 });
 
       const listItems = canvas.getAllByRole('listitem');
       expect(listItems).toHaveLength(2);
@@ -54,7 +54,7 @@ export const WithMarkdown: Story = {
 // バリデーションエラー
 export const ValidationError: Story = {
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.parentNode as HTMLElement);
 
     await step('空のフォームを送信', async () => {
       await userEvent.click(canvas.getByRole('button', { name: '作成' }));
@@ -74,7 +74,7 @@ export const SubmitSuccess: Story = {
     },
   },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.parentNode as HTMLElement);
 
     await step('フォームに値を入力', async () => {
       // タイトル入力
@@ -109,7 +109,7 @@ export const CancelOperation: Story = {
     onCancel: () => {},
   },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.parentNode as HTMLElement);
 
     await step('フォームに値を入力', async () => {
       await userEvent.type(
