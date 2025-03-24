@@ -8,7 +8,7 @@ export const handlers = {
   // 正常系
   default: http.post(API_PATH, async () => {
     await customDelay(1000);
-    return HttpResponse.json({ data: {}, status: 201 });
+    return HttpResponse.json({}, { status: 201 });
   }),
 
   // エラー状態

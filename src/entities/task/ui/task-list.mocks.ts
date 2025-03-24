@@ -10,10 +10,7 @@ const TASKS_API_PATH = '/api/tasks';
 export const handlers = {
   // 正常系（タスクあり）
   default: http.get(TASKS_API_PATH, () => {
-    return HttpResponse.json({
-      data: { tasks: sampleTasks },
-      status: 200,
-    });
+    return HttpResponse.json({ tasks: sampleTasks });
   }),
 
   // ローディング状態
@@ -21,10 +18,7 @@ export const handlers = {
 
   // タスクが空の状態
   empty: http.get(TASKS_API_PATH, () => {
-    return HttpResponse.json({
-      data: { tasks: emptyTasks },
-      status: 200,
-    });
+    return HttpResponse.json({ tasks: emptyTasks });
   }),
 
   // エラー状態
