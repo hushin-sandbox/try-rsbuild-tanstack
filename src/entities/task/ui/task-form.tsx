@@ -11,6 +11,7 @@ import {
   FormMessage,
 } from '~/shared/ui/form';
 import { Input } from '~/shared/ui/input';
+import { MarkdownField } from '~/shared/ui/markdown-field';
 import {
   Select,
   SelectContent,
@@ -18,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/shared/ui/select';
-import { Textarea } from '~/shared/ui/textarea';
 import { type NewTask, newTaskSchema } from '../model/task';
 import type { TaskPriority, TaskStatus } from '../model/types';
 
@@ -113,23 +113,16 @@ export function TaskForm({ onSubmit, onCancel }: TaskFormProps) {
       {/* 説明フィールド */}
       <form.AppField name="description">
         {(field) => (
-          <FormField name={field.name}>
-            <FormItem>
-              <FormLabel>説明</FormLabel>
-              <FormControl>
-                <Textarea
-                  value={field.state.value ?? ''}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  placeholder="タスクの詳細な説明を入力"
-                />
-              </FormControl>
-              <FormDescription>
-                タスクの詳細を記述してください（1000文字以内）
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          </FormField>
+          <MarkdownField
+            name={field.name}
+            label="説明"
+            description="タスクの詳細を記述してください（1000文字以内）"
+            value={field.state.value ?? ''}
+            onChange={field.handleChange}
+            onBlur={field.handleBlur}
+            error={field.state.meta.errors?.[0]?.message}
+            placeholder="タスクの詳細な説明を入力（マークダウン形式で記述できます）"
+          />
         )}
       </form.AppField>
 
