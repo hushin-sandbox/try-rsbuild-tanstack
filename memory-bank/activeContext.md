@@ -35,15 +35,28 @@
 graph TD
     A[フォーム拡張] --> B[追加フィールド]
     A --> C[高度な機能]
-    B --> D[Description]
-    B --> E[DueDate]
-    B --> F[Tags]
-    C --> G[Completion]
-    C --> H[Recurrence]
-    C --> I[ParentTask]
+    B --> D[DueDate]
+    B --> E[Tags]
+    C --> F[Completion]
+    C --> G[Recurrence]
+    C --> H[ParentTask]
+
+    style D fill:#FFE4B5
+    style E fill:#FFE4B5
+    style F fill:#F0F8FF
+    style G fill:#F0F8FF
+    style H fill:#F0F8FF
+
+    classDef completed fill:#98FB98
+    class Description completed
 ```
 
-### インライン編集機能
+注:
+- 緑色: 完了済み
+- オレンジ: 進行中/優先
+- 青: 予定
+
+### インライン編集機能の実装状況
 
 ```mermaid
 graph TD
@@ -53,7 +66,20 @@ graph TD
     B --> E[フォーカス管理]
     C --> F[バリデーション]
     C --> G[キャンセル処理]
+
+    style D fill:#FFE4B5
+    style E fill:#FFE4B5
+    style F fill:#FFE4B5
+    style G fill:#FFE4B5
 ```
+
+進捗:
+- Description フィールドの実装完了
+  - Markdown対応
+  - プレビュー機能
+  - バリデーション統合
+- DueDate, Tagsフィールドの実装準備中
+- インライン編集の基本UIコンポーネント設計中
 
 ## 注意事項とリスク
 

@@ -54,9 +54,8 @@ export const handlers = {
   // 正常系
   default: http.get(API_PATH, () => {
     return HttpResponse.json({
-      data: { items: sampleData },
-      status: 200,
-    });
+      tasks: sampleData
+    })
   }),
 
   // ローディング状態
@@ -65,9 +64,8 @@ export const handlers = {
   // データが空の状態
   empty: http.get(API_PATH, () => {
     return HttpResponse.json({
-      data: { items: [] },
-      status: 200,
-    });
+      tasks: []
+    })
   }),
 
   // エラー状態
