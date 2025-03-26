@@ -1,143 +1,192 @@
-# React テストのベストプラクティス
+# React Testing のベストプラクティス
 
-## ESLint で検出可能な規則
+## 概要
 
-### `eslint-plugin-testing-library`で検出可能な規則
+React アプリケーションのテストにおいて、実装の詳細ではなくユーザーの視点に焦点を当てたテストを書くことが重要です。このドキュメントでは、効果的なテストを書くためのベストプラクティスをまとめています。
 
-- `screen`オブジェクトの使用を強制
-- 不要な`cleanup`の使用を禁止
-- テスト ID の過度な使用を制限
-- `waitFor`内での副作用を禁止
-- 空の`waitFor`コールバックを禁止
+## 主要な原則
 
-### `eslint-plugin-jest-dom`で検出可能な規則
+### 1. 実装の詳細を避ける
 
-- アサーションメソッドの適切な使用
-  - `toBeInTheDocument()`の使用を推奨
-  - `toBeTruthy()`/`toBeFalsy()`の代わりに具体的なマッチャーを使用
+実装の詳細のテストは以下の問題を引き起こす可能性があります：
 
-### コードスタイル関連
+- リファクタリング時にテストが壊れる（偽陰性）
+- アプリケーションが壊れているのにテストが通る（偽陽性）
 
-- テストファイル命名規則の統一
-- テスト記述の一貫性確保
-- 不要なテストユーティリティの使用制限
+代わりに：
 
-## テストの設計原則
+- ユーザーの視点でテストを書く
+- コンポーネントの外部動作に注目する
+- アクセシビリティを考慮したクエリを使用する
 
-### 1. テストコードの構造化
+### 2. テストの独立性を保つ
 
-- ネストされた describe ブロックを避ける
+- 各テストは独立して実行できるようにする
+- テスト間で状態を共有しない
+- 不要な副作用を避ける
 
-  ```typescript
-  // ❌ 避けるべき
-  describe('when logged in', () => {
-    beforeEach(() => {
-      // セットアップ
-    });
-    describe('when clicking button', () => {
-      // テスト
-    });
-  });
+### 3. シンプルなテストを書く
 
-  // ✅ 推奨
-  test('logged in user can click button', () => {
-    // セットアップとテストを一箇所に
-  });
-  ```
+- ネストを避け、フラットな構造を維持する
+- 過度な抽象化を避ける
+- テストの意図を明確にする
 
-### 2. テストの分離とユースケースベース
+### 4. ユースケースベースのテスト
 
-- 機能の断片ではなく、完全なユースケースをテスト
+- 個々の機能ではなく、ユーザーシナリオをテスト
+- エンドツーエンドの動作を確認
+- 実際のユースケースに基づいたテスト
+
+## 推奨されるアプローチ
+
+### テストの書き方
 
 ```typescript
-// ❌ 避けるべき：機能を分割したテスト
-test('counter initializes with correct value', () => {
-  render(<Counter maxClicks={4} initialCount={3} />);
-  expect(screen.getByText(/count: 3/i)).toBeInTheDocument();
+// ❌ 避けるべきアプローチ（ネストが深い）
+describe('Login', () => {
+  describe('when form is submitted', () => {
+    describe('with valid credentials', () => {
+      it('calls onSubmit', () => {
+        // ...
+      });
+    });
+  });
 });
 
-test('counter increments on click', () => {
-  render(<Counter maxClicks={4} initialCount={3} />);
-  userEvent.click(screen.getByText(/count/i));
-  expect(screen.getByText(/count: 4/i)).toBeInTheDocument();
-});
-
-// ✅ 推奨：ユースケース全体を1つのテストで
-test('allows clicks until maxClicks, then requires reset', () => {
-  render(<Counter maxClicks={4} initialCount={3} />);
-  const counterButton = screen.getByText(/^count/i);
-
-  // 初期状態の確認
-  expect(counterButton).toHaveTextContent('3');
-
-  // クリックでカウントが増加
-  userEvent.click(counterButton);
-  expect(counterButton).toHaveTextContent('4');
-
-  // maxClicksに達したら無効化
-  expect(counterButton).toHaveAttribute('disabled');
-
-  // リセット機能の確認
-  userEvent.click(screen.getByText(/reset/i));
-  expect(counterButton).toHaveTextContent('3');
-  expect(counterButton).not.toHaveAttribute('disabled');
+// ✅ 推奨されるアプローチ（フラット）
+test('submits form with valid credentials', () => {
+  // ...
 });
 ```
 
-### 3. テストヘルパー関数の活用
+### クエリの選択
+
+優先順位の高い順に：
+
+1. `getByRole` - アクセシビリティと役割に基づく検索
+2. `getByLabelText` - フォーム要素に最適
+3. `getByText` - テキストコンテンツで要素を見つける
+4. `getByTestId` - 最後の手段として
+
+## サンプルコード
+
+### コンポーネント実装
 
 ```typescript
-// ✅ 推奨: 設定可能なヘルパー関数
-function setup(props = {}) {
-  const defaultProps = {
-    maxClicks: 4,
-    initialCount: 3,
-    ...props,
-  };
-  const utils = render(<Counter {...defaultProps} />);
-  const counterButton = utils.getByText(/^count/i);
-
-  return {
-    ...utils,
-    counterButton,
-    clickCounter: () => userEvent.click(counterButton),
-    clickReset: () => userEvent.click(utils.getByText(/reset/i)),
-  };
+// login.ts
+interface LoginProps {
+  onSubmit: (credentials: { username: string; password: string }) => void;
 }
 
-test('counter behaves correctly', () => {
-  const { counterButton, clickCounter, clickReset } = setup();
+function Login({ onSubmit }: LoginProps) {
+  const [error, setError] = React.useState('');
 
-  // テストシナリオの実行
-  clickCounter();
-  expect(counterButton).toHaveTextContent('4');
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const elements = event.currentTarget
+      .elements as HTMLFormControlsCollection & {
+      usernameInput: HTMLInputElement;
+      passwordInput: HTMLInputElement;
+    };
+    const username = elements.usernameInput.value;
+    const password = elements.passwordInput.value;
+
+    if (!username) {
+      setError('username is required');
+    } else if (!password) {
+      setError('password is required');
+    } else {
+      setError('');
+      onSubmit({ username, password });
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="usernameInput">Username</label>
+        <input id="usernameInput" />
+      </div>
+      <div>
+        <label htmlFor="passwordInput">Password</label>
+        <input id="passwordInput" type="password" />
+      </div>
+      <button type="submit">Submit</button>
+      {error ? <div role="alert">{error}</div> : null}
+    </form>
+  );
+}
+```
+
+### テストコード
+
+```typescript
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import * as React from 'react';
+import Login from './login';
+
+test('shows error messages for invalid submissions', async () => {
+  const handleSubmit = jest.fn();
+  render(<Login onSubmit={handleSubmit} />);
+
+  // Submit without username
+  await userEvent.click(screen.getByText(/submit/i));
+  expect(screen.getByRole('alert')).toHaveTextContent('username is required');
+
+  // Add username and submit without password
+  await userEvent.type(screen.getByLabelText(/username/i), 'test');
+  await userEvent.click(screen.getByText(/submit/i));
+  expect(screen.getByRole('alert')).toHaveTextContent('password is required');
+
+  // Valid submission
+  await userEvent.type(screen.getByLabelText(/password/i), 'password');
+  await userEvent.click(screen.getByText(/submit/i));
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  expect(handleSubmit).toHaveBeenCalledWith({
+    username: 'test',
+    password: 'password',
+  });
 });
 ```
 
-### 4. テストの独立性
+## テストツール
 
-- 各テストは独立して実行可能
-- 共有状態に依存しない
-- テストの順序に依存しない
-- 副作用を適切に処理
+### 1. React Testing Library
 
-## React Testing Library の使用方法
+最も推奨されるテストライブラリで、以下の特徴があります：
 
-### 1. クエリの優先順位
+- ユーザー中心のテストを促進
+- アクセシビリティを重視
+- 実装の詳細に依存しない
 
-1. `getByRole` - 最も推奨
-2. `getByLabelText` - フォーム要素
-3. `getByText` - テキストコンテンツ
-4. `getByTestId` - 最終手段
+### 2. ESLint プラグイン
 
-### 2. クエリバリアントの使い分け
+- `eslint-plugin-testing-library`
+- `eslint-plugin-jest-dom`
 
-- `get*` - 要素が存在することを期待
-- `query*` - 要素が存在しないことを確認
-- `find*` - 非同期で要素が表示されることを期待
+これらのプラグインは、ベストプラクティスに従ったテストの記述を支援します。
 
-### 3. ユーザーイベントの使用
+### 3. `userEvent`
 
-- `userEvent`を優先して使用
-- `fireEvent`は必要な場合のみ使用
-- 実際のユーザー操作に近い動作をシミュレート
+`fireEvent`の代わりに`userEvent`を使用することで、より実際のユーザー操作に近い動作をシミュレートできます：
+
+```typescript
+// ❌ 避ける
+fireEvent.change(input, { target: { value: 'test' } });
+
+// ✅ 推奨
+await userEvent.type(input, 'test');
+```
+
+### 4. jest-dom
+
+カスタムマッチャーを提供し、より直感的なアサーションを可能にします：
+
+```typescript
+// ❌ 避ける
+expect(element.disabled).toBe(true);
+
+// ✅ 推奨
+expect(element).toBeDisabled();
+```
