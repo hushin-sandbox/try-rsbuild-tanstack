@@ -43,7 +43,7 @@ export const FilledForm: Story = {
       handlers: [handlers.default],
     },
     test: {
-      // なぜか pnpm test-storybook でエラーが発生するため、一時的に無効化
+      // FIXME なぜか pnpm test-storybook でエラーが発生するため、一時的に無効化
       dangerouslyIgnoreUnhandledErrors: true,
     },
   },
