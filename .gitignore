@@ -10,3 +10,8 @@ dist/
 # IDE
 !.vscode/extensions.json
 .idea
+
+# cline
+.clinerules
+docs/plans
+docs/memory-bank

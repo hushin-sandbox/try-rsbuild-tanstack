@@ -91,19 +91,13 @@ pnpm build
 pnpm preview
 ```
 
-## ドキュメント
+## AI開発サポート
 
-詳細なドキュメントは以下を参照してください：
+AIルールの生成:
 
-- [React Testing](docs/refs/react-testing.md)
-- [Storybook](docs/refs/storybook.md)
-- [shadcn/ui](docs/refs/shadcn-ui.md)
-- [TanStack Form](docs/refs/tanstack-form.md)
-- [Valibot](docs/refs/valibot.md)
+```bash
+./docs/scripts/generate-ai-rules.sh
+```
 
-## アーキテクチャ決定記録（ADR）
-
-主要な技術選定や設計判断は以下のドキュメントに記録されています：
-
-- [タスク型の構成](docs/adr/002-task-types-organization.md)
-- [API型の構成](docs/adr/003-api-types-organization.md)
+このスクリプトは `docs/rules/` 配下のルールファイルを `.clinerules/` ディレクトリにコピーします（`x-` から始まるファイルは除外）。AIアシスタントがプロジェクトの規約やパターンを理解するために使用します。
+```
