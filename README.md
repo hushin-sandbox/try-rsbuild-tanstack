@@ -90,20 +90,3 @@ pnpm build
 ```bash
 pnpm preview
 ```
-
-## ドキュメント
-
-詳細なドキュメントは以下を参照してください：
-
-- [React Testing](docs/refs/react-testing.md)
-- [Storybook](docs/refs/storybook.md)
-- [shadcn/ui](docs/refs/shadcn-ui.md)
-- [TanStack Form](docs/refs/tanstack-form.md)
-- [Valibot](docs/refs/valibot.md)
-
-## アーキテクチャ決定記録（ADR）
-
-主要な技術選定や設計判断は以下のドキュメントに記録されています：
-
-- [タスク型の構成](docs/adr/002-task-types-organization.md)
-- [API型の構成](docs/adr/003-api-types-organization.md)
