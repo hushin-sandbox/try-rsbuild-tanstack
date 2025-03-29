@@ -90,3 +90,14 @@ pnpm build
 ```bash
 pnpm preview
 ```
+
+## AI開発サポート
+
+AIルールの生成:
+
+```bash
+./docs/scripts/generate-ai-rules.sh
+```
+
+このスクリプトは `docs/rules/` 配下の全てのルールファイルを `.clinerules/` ディレクトリにコピーします。AIアシスタントがプロジェクトの規約やパターンを理解するために使用します。
+```
