@@ -10,6 +10,32 @@
 - 実際のユーザー体験に近いテストを優先
 - モックは必要最小限にとどめ、可能な限り実際の実装を使用
 
+### ストーリーベースのテスト実装
+
+- `@storybook/react` の `composeStories` を使用してストーリーを再利用する
+- 各状態（正常系、ローディング、空、エラー 等）のテストを実装する
+
+```typescript
+import { composeStories } from '@storybook/react';
+import { screen } from '@testing-library/react';
+import * as stories from './component.stories';
+
+const { Default, Loading, Empty, ErrorCase } = composeStories(stories);
+
+describe('Component', () => {
+  test('正常系の表示を確認', async () => {
+    await Default.run();
+    // アクセシビリティを考慮したクエリを使用
+    expect(screen.getByRole('heading')).toBeInTheDocument();
+  });
+
+  test('ローディング状態を確認', async () => {
+    await Loading.run();
+    expect(screen.queryByRole('list')).not.toBeInTheDocument();
+  });
+});
+```
+
 ## Frontend Testing 主要な原則
 
 ### 1. 実装の詳細を避ける
