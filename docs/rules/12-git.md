@@ -20,11 +20,32 @@ git コミットとプルリクエストの作成に関するベストプラク�
 git add <files>
 
 # コミット例
-git commit -m "feat: (description)"
+git commit -m "$(cat <<'EOF'
+<type>(<scope>): <適切なメッセージ>
+
+- <詳細な変更内容>
+- <詳細な変更内容>
+
+EOF
+)"
 ```
 
 ### プルリクエストの作成
 
+#### ブランチの状態確認
+
+```
+# 未コミットの変更確認
+git status
+
+# mainからの差分確認
+GIT_PAGER=cat git diff --stat main...HEAD 
+
+# コミット履歴の確認
+GIT_PAGER=cat git log main..HEAD
+```
+
+#### 実行コマンド
 `gh pr` コマンドを使って作成する
 
 ```bash

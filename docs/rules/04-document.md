@@ -2,7 +2,7 @@
 
 - 機能変更時は `/docs` の関連ドキュメントを更新する
 - `README.md` は新機能と連携して更新する
-- 実装前に `/docs/plan/(yyyy-MM-dd)-(slug).md` に実装計画を作成する
+- 実装前に `/docs/plans/(yyyy-MM-dd)-(slug).md` に実装計画を作成する
 - アーキテクチャ決定記録（ADR）を `/docs/adr/(yyyy-MM-dd)-(slug).md` に保存する：
   - 主要な依存関係の変更
   - アーキテクチャパターンの変更
