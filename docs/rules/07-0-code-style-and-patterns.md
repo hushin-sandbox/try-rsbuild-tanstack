@@ -41,10 +41,11 @@ function fetchUser(id: string): Promise<Result<User, ApiError>> {
 - 非nullアサーション`!`は避ける
 - 早期リターンでネスト削減
 
-### 関数型
+### 関数型アプローチ
 
 - 関数型アプローチを優先する：
   - `map`、`filter`、`reduce` などを活用する
+- 純粋関数: 副作用を持たない関数を優先
 
 ### モジュール構成
 
