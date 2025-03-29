@@ -3,9 +3,10 @@
 - 関数型アプローチを優先する：
   - `map`、`filter`、`reduce` などを活用する
   - 早期リターンパターンを使用する
-- `any` 型の使用を避ける
+- `any`型は避け、代わりに`unknown`使用
 - 型アサーション `as` の過剰使用を避ける
-- コード整形・リンティングは保存時に Biome が適用されます。私が行う必要はありません
+- 複雑な型は`interface`/`type`で定義
+- 配列型は`T[]`形式を優先
 - Make Impossible States Impossible
   - Use Discriminated Union for complex situations
 
