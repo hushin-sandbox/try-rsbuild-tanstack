@@ -128,7 +128,7 @@ function Login({ onSubmit }: LoginProps) {
 
 ```typescript
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event'; // `fireEvent` より `userEvent`を優先する
 import * as React from 'react';
 import Login from './login';
 
