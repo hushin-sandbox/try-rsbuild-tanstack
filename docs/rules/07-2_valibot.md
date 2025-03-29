@@ -1,27 +1,16 @@
-### Valibot のルール
+### Valibot の使い方
 
-詳しくは [document](docs/refs/valibot.md) を参照
+zodとはAPIが違うので注意すること
 
 ```ts
-// Example
-import * as v from 'valibot';
+import * as v from 'valibot'; // `* as v` で import して 使う
 
-// Create login schema with email and password
 const LoginSchema = v.object({
+  // .pipe でスキーマにパイプラインを追加
   email: v.pipe(v.string(), v.email()),
-  password: v.pipe(v.string(), v.minLength(8)),
+  password: v.pipe(v.string(), v.minLength(8)), 
 });
 
-// Infer output TypeScript type of login schema as
-// { email: string; password: string }
+// v.InferOutput で型を生成
 type LoginData = v.InferOutput<typeof LoginSchema>;
-
-// Throws error for email and password
-const output1 = v.parse(LoginSchema, { email: '', password: '' });
-
-// Returns data as { email: string; password: string }
-const output2 = v.parse(LoginSchema, {
-  email: 'jane@example.com',
-  password: '12345678',
-});
 ```
