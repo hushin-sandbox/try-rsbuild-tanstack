@@ -2,9 +2,14 @@ import { initialize, mswLoader } from 'msw-storybook-addon';
 import '../src/styles.css';
 
 import type { Preview } from '@storybook/react';
+import { configure } from '@storybook/test';
 import { Providers, createQueryClient } from '../src/shared/lib/providers';
 
 initialize();
+
+configure({
+  asyncUtilTimeout: 2000,
+});
 
 const preview: Preview = {
   parameters: {},

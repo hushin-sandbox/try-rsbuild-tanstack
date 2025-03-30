@@ -46,3 +46,20 @@ window.PointerEvent = MockPointerEvent as any;
 window.HTMLElement.prototype.scrollIntoView = vi.fn();
 window.HTMLElement.prototype.releasePointerCapture = vi.fn();
 window.HTMLElement.prototype.hasPointerCapture = vi.fn();
+
+// button type=submit のクリックイベントをsubmitイベントに変換する
+// https://github.com/capricorn86/happy-dom/issues/527
+const originalDispatchEvent = HTMLElement.prototype.dispatchEvent;
+HTMLElement.prototype.dispatchEvent = function (event): boolean {
+  const result = originalDispatchEvent.call(this, event);
+  if (
+    event.type === 'click' &&
+    this.tagName === 'BUTTON' &&
+    this.getAttribute('type') === 'submit'
+  ) {
+    this.dispatchEvent(
+      new Event('submit', { bubbles: true, cancelable: true }),
+    );
+  }
+  return result;
+};
