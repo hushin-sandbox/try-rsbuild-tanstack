@@ -102,6 +102,20 @@ export const TaskMethods = {
     }
     return new Date(task.dueDate) < new Date();
   },
+
+  // サブタスクを取得
+  getSubtasks(tasks: Task[], parentId: string): Task[] {
+    return tasks.filter((task) => task.parentId === parentId);
+  },
+
+  // サブタスク作成時のバリデーション
+  validateSubtaskCreation(parentTask: Task): void {
+    if (parentTask.parentId) {
+      throw new TaskValidationError(
+        'サブタスクの下にサブタスクは作成できません',
+      );
+    }
+  },
 };
 
 // Custom Error

@@ -24,9 +24,7 @@ describe('TaskCreateModal', () => {
     // モーダルを閉じる（キャンセルボタン）
     await user.click(screen.getByRole('button', { name: 'キャンセル' }));
     await waitFor(() => {
-      expect(
-        screen.queryByRole('heading', { name: '新規タスク作成' }),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
   });
 
@@ -48,9 +46,7 @@ describe('TaskCreateModal', () => {
 
     // モーダルが閉じることを確認
     await waitFor(() => {
-      expect(
-        screen.queryByRole('heading', { name: '新規タスク作成' }),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
   });
 
@@ -73,9 +69,7 @@ describe('TaskCreateModal', () => {
 
     // エラー時はモーダルが閉じないことを確認
     await waitFor(() => {
-      expect(
-        screen.getByRole('heading', { name: '新規タスク作成' }),
-      ).toBeInTheDocument();
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
     });
   });
 });

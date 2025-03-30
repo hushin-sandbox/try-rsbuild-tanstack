@@ -295,5 +295,49 @@ describe('Task Model', () => {
         expect(TaskMethods.isOverdue(completedTask)).toBe(false);
       });
     });
+
+    describe('getSubtasks', () => {
+      it('指定された親タスクのサブタスクを取得できること', () => {
+        const parentTask = createTask(newTask);
+        const subtask1 = createTask({ ...newTask, parentId: parentTask.id });
+        const subtask2 = createTask({ ...newTask, parentId: parentTask.id });
+        const unrelatedTask = createTask(newTask);
+
+        const tasks = [parentTask, subtask1, subtask2, unrelatedTask];
+        const subtasks = TaskMethods.getSubtasks(tasks, parentTask.id);
+
+        expect(subtasks).toHaveLength(2);
+        expect(subtasks).toEqual(expect.arrayContaining([subtask1, subtask2]));
+        expect(subtasks).not.toContain(unrelatedTask);
+      });
+
+      it('サブタスクが存在しない場合は空配列を返すこと', () => {
+        const parentTask = createTask(newTask);
+        const unrelatedTask = createTask(newTask);
+
+        const tasks = [parentTask, unrelatedTask];
+        const subtasks = TaskMethods.getSubtasks(tasks, parentTask.id);
+
+        expect(subtasks).toHaveLength(0);
+      });
+    });
+
+    describe('validateSubtaskCreation', () => {
+      it('サブタスクの下にサブタスクを作成しようとするとエラーになること', () => {
+        const parentTask = createTask({ ...newTask, parentId: '123' });
+
+        expect(() => TaskMethods.validateSubtaskCreation(parentTask)).toThrow(
+          'サブタスクの下にサブタスクは作成できません',
+        );
+      });
+
+      it('通常のタスクの下にサブタスクを作成できること', () => {
+        const parentTask = createTask(newTask);
+
+        expect(() =>
+          TaskMethods.validateSubtaskCreation(parentTask),
+        ).not.toThrow();
+      });
+    });
   });
 });
