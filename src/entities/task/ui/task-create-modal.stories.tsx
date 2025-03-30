@@ -77,15 +77,9 @@ export const FilledForm: Story = {
     });
 
     await step('モーダルが閉じることを確認', async () => {
-      await waitFor(
-        () => {
-          expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
-        },
-        {
-          // タイムアウトを適切に設定（デフォルトは1000ms）
-          timeout: 2000,
-        },
-      );
+      await waitFor(() => {
+        expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
+      });
     });
   },
 };
@@ -133,15 +127,9 @@ export const CancelOperation: Story = {
     });
 
     await step('モーダルが閉じることを確認', async () => {
-      await waitFor(
-        () => {
-          expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
-        },
-        {
-          // タイムアウトを適切に設定（デフォルトは1000ms）
-          timeout: 2000,
-        },
-      );
+      await waitFor(() => {
+        expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
+      });
     });
   },
 };
