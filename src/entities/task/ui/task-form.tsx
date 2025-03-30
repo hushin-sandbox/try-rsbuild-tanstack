@@ -44,11 +44,18 @@ const defaultValues: TaskFormValues = {
 interface TaskFormProps {
   onSubmit: (task: NewTask) => Promise<void>;
   onCancel?: () => void;
+  submitText?: string;
+  defaultValues?: TaskFormValues;
 }
 
-export function TaskForm({ onSubmit, onCancel }: TaskFormProps) {
+export function TaskForm({
+  onSubmit,
+  onCancel,
+  submitText = '作成',
+  defaultValues: initialValues = defaultValues,
+}: TaskFormProps) {
   const form = useAppForm({
-    defaultValues,
+    defaultValues: initialValues,
     validators: {
       onChange: taskFormSchema,
     },
@@ -194,7 +201,7 @@ export function TaskForm({ onSubmit, onCancel }: TaskFormProps) {
           </Button>
         )}
         <Button type="submit" disabled={!form.state.canSubmit}>
-          作成
+          {submitText}
         </Button>
       </div>
     </Form>

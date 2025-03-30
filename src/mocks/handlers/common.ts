@@ -1,5 +1,53 @@
-import { http, HttpResponse } from 'msw';
+import { http, type HttpHandler, HttpResponse } from 'msw';
 import { customDelay } from '../lib/delay';
+
+// 汎用的なエラーハンドラー作成関数
+export const createErrorHandler = (
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+  path: string,
+  status = 500,
+): HttpHandler => {
+  const response = HttpResponse.json(
+    {
+      status,
+      message: 'Internal Server Error',
+    },
+    { status },
+  );
+
+  switch (method) {
+    case 'GET':
+      return http.get(path, () => response);
+    case 'POST':
+      return http.post(path, () => response);
+    case 'PUT':
+      return http.put(path, () => response);
+    case 'DELETE':
+      return http.delete(path, () => response);
+  }
+};
+
+// Loading状態の汎用ハンドラー作成関数
+export const createLoadingHandler = (
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+  path: string,
+): HttpHandler => {
+  const response = async () => {
+    await customDelay('infinite');
+    return new HttpResponse(null, { status: 200 });
+  };
+
+  switch (method) {
+    case 'GET':
+      return http.get(path, response);
+    case 'POST':
+      return http.post(path, response);
+    case 'PUT':
+      return http.put(path, response);
+    case 'DELETE':
+      return http.delete(path, response);
+  }
+};
 
 // Loading状態のGETハンドラー
 export const createLoadingHandlerGet = (path: string) =>

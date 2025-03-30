@@ -83,7 +83,7 @@ describe('Task API Handlers', () => {
     });
   });
 
-  describe('PATCH /api/tasks/:id', () => {
+  describe('PUT /api/tasks/:id', () => {
     it('タスクを更新できること', async () => {
       // タスクを作成
       const createResponse = await fetch('/api/tasks', {
@@ -96,7 +96,7 @@ describe('Task API Handlers', () => {
       // タスクを更新
       const updates = { title: '更新されたタスク', isCompleted: true };
       const response = await fetch(`/api/tasks/${task.id}`, {
-        method: 'PATCH',
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),
       });
