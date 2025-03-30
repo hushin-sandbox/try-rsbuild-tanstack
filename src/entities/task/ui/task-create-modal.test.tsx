@@ -1,13 +1,14 @@
 import { composeStories } from '@storybook/react';
 import { screen, waitFor } from '@testing-library/react';
-import { setup } from '~/test/helpers/setup';
+import { userEvent } from '@testing-library/user-event';
 import * as stories from './task-create-modal.stories';
 
 const { Default, Opened, ErrorCase } = composeStories(stories);
 
 describe('TaskCreateModal', () => {
   test('モーダルの開閉ができる', async () => {
-    const { user } = await setup(Default);
+    const user = userEvent.setup();
+    await Default.run();
 
     // 初期状態ではモーダルは閉じている
     expect(
@@ -30,7 +31,8 @@ describe('TaskCreateModal', () => {
   });
 
   test('タスクを作成できる', async () => {
-    const { user } = await setup(Opened);
+    const user = userEvent.setup();
+    await Opened.run();
     // フォームに入力
     await user.type(
       screen.getByRole('textbox', { name: 'タイトル' }),
@@ -53,7 +55,8 @@ describe('TaskCreateModal', () => {
   });
 
   test('エラー時にモーダルが開いたままになる', async () => {
-    const { user } = await setup(ErrorCase);
+    const user = userEvent.setup();
+    await ErrorCase.run();
 
     // フォームに入力
     await user.type(
