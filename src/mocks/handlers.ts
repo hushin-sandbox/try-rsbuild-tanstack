@@ -33,7 +33,7 @@ export const handlers = [
   }),
 
   // タスク更新
-  http.patch('/api/tasks/:id', async ({ params, request }) => {
+  http.put('/api/tasks/:id', async ({ params, request }) => {
     const task = storageAdapter.getTask(params.id as string);
     if (!task) {
       const errorResponse: APIErrorResponse = {
