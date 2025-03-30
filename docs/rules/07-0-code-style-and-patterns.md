@@ -49,7 +49,7 @@ function fetchUser(id: string): Promise<Result<User, ApiError>> {
 
 ### モジュール構成
 
-- 絶対パスは`@/*`エイリアス使用
+- 絶対パスは`~/*`エイリアス使用
 - 型のみの場合は`import type`
 - 循環参照を避ける
 
