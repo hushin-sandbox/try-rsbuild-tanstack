@@ -120,7 +120,3 @@ src/
             └── task-list.stories.tsx # Storybook
 ```
 
-### テストでのモックの使用
-
-- テストではStorybookを再利用する
-  - composeStories を利用して `<StoryName>.run()` でモックが適用される
