@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Badge } from '~/shared/ui/badge';
 import { Button } from '~/shared/ui/button';
+import { useDeleteTask } from '../api/useDeleteTask';
 import { useTasks } from '../api/useTasks';
 import type { Task } from '../model/task';
 import { TaskMethods } from '../model/task';
+import { TaskDeleteDialog } from './task-delete-dialog';
 
 export function TaskList() {
   const { data: tasks } = useTasks();
@@ -25,6 +27,7 @@ export function TaskList() {
 
 function TaskItem({ task, tasks }: { task: Task; tasks: Task[] }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { mutate: deleteTask } = useDeleteTask();
   const subtasks = TaskMethods.getSubtasks(tasks, task.id);
   const hasSubtasks = subtasks.length > 0;
 
@@ -48,6 +51,10 @@ function TaskItem({ task, tasks }: { task: Task; tasks: Task[] }) {
           <div className="flex items-center gap-2">
             <StatusBadge status={task.status} />
             <PriorityBadge priority={task.priority} />
+            <TaskDeleteDialog
+              task={task}
+              onConfirm={() => deleteTask(task.id)}
+            />
           </div>
         </div>
         {task.description && (

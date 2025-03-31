@@ -111,4 +111,50 @@ describe('TaskList', () => {
       expect(screen.getByRole('button', { name: '▶' })).toBeInTheDocument();
     });
   });
+
+  describe('削除機能', () => {
+    test('タスクを削除できる', async () => {
+      const user = userEvent.setup();
+      await Default.run();
+
+      // 削除ボタンをクリック
+      const deleteButton = screen.getAllByLabelText('タスクを削除')[0];
+      await user.click(deleteButton);
+
+      // 削除確認ダイアログが表示される
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+      expect(
+        screen.getByText(/を削除してよろしいですか？/),
+      ).toBeInTheDocument();
+
+      // 削除を実行
+      const confirmButton = screen.getByRole('button', { name: '削除' });
+      await user.click(confirmButton);
+
+      // ダイアログが閉じる
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
+    test('削除をキャンセルできる', async () => {
+      const user = userEvent.setup();
+      await Default.run();
+
+      // 削除ボタンをクリック
+      const deleteButton = screen.getAllByLabelText('タスクを削除')[0];
+      await user.click(deleteButton);
+
+      // キャンセルボタンをクリック
+      const cancelButton = screen.getByRole('button', { name: 'キャンセル' });
+      await user.click(cancelButton);
+
+      // ダイアログが閉じる
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      // タスクが表示されたままである
+      expect(
+        screen.getByRole('heading', {
+          name: 'プロジェクトA：要件定義と実装',
+        }),
+      ).toBeInTheDocument();
+    });
+  });
 });

@@ -1,5 +1,5 @@
 import type { Task } from '~/entities/task/model/task';
-import { createTask } from '~/entities/task/model/task';
+import { TaskMethods, createTask } from '~/entities/task/model/task';
 
 const STORAGE_KEY = 'tasks';
 
@@ -25,8 +25,18 @@ export const storageAdapter = {
   },
 
   deleteTask(id: string): void {
-    const tasks = this.getTasks().filter((task) => task.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    const tasks = this.getTasks();
+    const taskToDelete = tasks.find((task) => task.id === id);
+    if (!taskToDelete) return;
+
+    const subtaskIds = TaskMethods.getAllSubtasks(tasks, id).map(
+      (task: Task) => task.id,
+    );
+    const remainingTasks = tasks.filter(
+      (task) => task.id !== id && !subtaskIds.includes(task.id),
+    );
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(remainingTasks));
   },
 };
 

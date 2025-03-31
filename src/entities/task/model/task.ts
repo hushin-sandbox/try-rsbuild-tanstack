@@ -108,6 +108,19 @@ export const TaskMethods = {
     return tasks.filter((task) => task.parentId === parentId);
   },
 
+  // サブタスクを再帰的に取得
+  getAllSubtasks(tasks: Task[], parentId: string): Task[] {
+    const directSubtasks = this.getSubtasks(tasks, parentId);
+    const allSubtasks = [...directSubtasks];
+
+    for (const subtask of directSubtasks) {
+      const nestedSubtasks = this.getAllSubtasks(tasks, subtask.id);
+      allSubtasks.push(...nestedSubtasks);
+    }
+
+    return allSubtasks;
+  },
+
   // サブタスク作成時のバリデーション
   validateSubtaskCreation(parentTask: Task): void {
     if (parentTask.parentId) {
