@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { NewTask, Task } from '../model/task';
+import { TaskMethods, TaskValidationError } from '../model/task';
 import type { APIErrorResponse, TaskResponse } from './types';
 
 async function createTask(newTask: NewTask): Promise<Task> {
@@ -24,7 +25,29 @@ export function useCreateTask() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: createTask,
+    mutationFn: async (newTask: NewTask) => {
+      if (newTask.parentId) {
+        // 親タスクを取得
+        const tasks = queryClient.getQueryData(['tasks']) as Task[];
+        const parentTask = tasks.find((task) => task.id === newTask.parentId);
+
+        if (!parentTask) {
+          throw new Error('親タスクが見つかりません');
+        }
+
+        // サブタスク作成のバリデーション
+        try {
+          TaskMethods.validateSubtaskCreation(parentTask);
+        } catch (error) {
+          if (error instanceof TaskValidationError) {
+            throw new Error(error.message);
+          }
+          throw error;
+        }
+      }
+
+      return createTask(newTask);
+    },
     // 楽観的更新の実装
     onMutate: async (newTask) => {
       // 既存のクエリをキャンセル
@@ -44,7 +67,7 @@ export function useCreateTask() {
 
       // キャッシュを更新
       queryClient.setQueryData(['tasks'], (old: Task[] | undefined) => {
-        return old ? [tempTask, ...old] : [tempTask];
+        return old ? [...old, tempTask] : [tempTask];
       });
 
       // コンテキストを返す
@@ -54,7 +77,7 @@ export function useCreateTask() {
     onSuccess: (newTask, _, _context) => {
       queryClient.setQueryData(['tasks'], (old: Task[] | undefined) => {
         if (!old) return [newTask];
-        // 一時的なタスクを実際のタスクに置き換え
+        // 一時的なタスクを実際のタスクに置き換え、位置はそのまま維持
         return old.map((task) =>
           task.id.startsWith('temp-') ? newTask : task,
         );

@@ -5,6 +5,7 @@ import { useDeleteTask } from '../api/useDeleteTask';
 import { useTasks } from '../api/useTasks';
 import type { Task } from '../model/task';
 import { TaskMethods } from '../model/task';
+import { TaskCreateModal } from './task-create-modal';
 import { TaskDeleteDialog } from './task-delete-dialog';
 
 export function TaskList() {
@@ -51,10 +52,22 @@ function TaskItem({ task, tasks }: { task: Task; tasks: Task[] }) {
           <div className="flex items-center gap-2">
             <StatusBadge status={task.status} />
             <PriorityBadge priority={task.priority} />
-            <TaskDeleteDialog
-              task={task}
-              onConfirm={() => deleteTask(task.id)}
-            />
+            <div className="flex items-center gap-2">
+              {!TaskMethods.isSubtask(task) && (
+                <TaskCreateModal
+                  parentId={task.id}
+                  triggerComponent={
+                    <Button variant="ghost" size="sm">
+                      サブタスク追加
+                    </Button>
+                  }
+                />
+              )}
+              <TaskDeleteDialog
+                task={task}
+                onConfirm={() => deleteTask(task.id)}
+              />
+            </div>
           </div>
         </div>
         {task.description && (
