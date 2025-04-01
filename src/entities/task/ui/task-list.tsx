@@ -7,6 +7,7 @@ import type { Task } from '../model/task';
 import { TaskMethods } from '../model/task';
 import { TaskCreateModal } from './task-create-modal';
 import { TaskDeleteDialog } from './task-delete-dialog';
+import { TaskEditButton } from './task-edit-button';
 
 export function TaskList() {
   const { data: tasks } = useTasks();
@@ -63,6 +64,7 @@ function TaskItem({ task, tasks }: { task: Task; tasks: Task[] }) {
                   }
                 />
               )}
+              <TaskEditButton task={task} />
               <TaskDeleteDialog
                 task={task}
                 onConfirm={() => deleteTask(task.id)}
