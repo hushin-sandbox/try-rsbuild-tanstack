@@ -70,7 +70,7 @@ export const Empty: Story = {
 };
 export const WithInteraction: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.parentNode as HTMLElement);
+    const canvas = within(canvasElement.parentNode as HTMLElement); // modalの要素をテストするために canvasElement.parentNode を渡す
     // インタラクションの実装
   }
 };
