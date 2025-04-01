@@ -1,10 +1,39 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
+import { sampleTasks } from '~/mocks/data/tasks';
+import { Providers, createQueryClient } from '~/shared/lib/providers';
+import { Button } from '~/shared/ui/button';
 import { TaskCreateModal } from './task-create-modal';
 import { handlers } from './task-create-modal.mocks';
 
+// テスト用のサンプルデータ
+const testParentTask = {
+  id: 'test-parent',
+  title: 'テスト用親タスク',
+  description: 'テスト用の親タスク',
+  status: 'todo' as const,
+  priority: 'medium' as const,
+  isCompleted: false,
+  tags: ['テスト'],
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+};
+
+// Storybookのプロバイダー
+const withProviders = (Story: React.ComponentType) => {
+  const queryClient = createQueryClient();
+  // タスクデータを事前に設定
+  queryClient.setQueryData(['tasks'], [testParentTask, ...sampleTasks]);
+  return (
+    <Providers queryClient={queryClient}>
+      <Story />
+    </Providers>
+  );
+};
+
 const meta = {
   component: TaskCreateModal,
+  decorators: [withProviders],
 } satisfies Meta<typeof TaskCreateModal>;
 
 export default meta;
@@ -81,6 +110,70 @@ export const FilledForm: Story = {
         expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
       });
     });
+  },
+};
+
+export const CreateSubTask: Story = {
+  args: {
+    defaultOpen: true,
+    parentId: '1',
+    triggerComponent: (
+      <Button variant="ghost" size="sm">
+        サブタスク追加
+      </Button>
+    ),
+  },
+  parameters: {
+    msw: {
+      handlers: [handlers.createSubTask],
+    },
+  },
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement.parentNode as HTMLElement);
+
+    await step('モーダルのタイトルを確認', async () => {
+      expect(
+        canvas.getByRole('heading', { name: 'サブタスク作成' }),
+      ).toBeInTheDocument();
+    });
+
+    await step('フォームに情報を入力', async () => {
+      await userEvent.type(
+        canvas.getByLabelText('タイトル'),
+        'サブタスクのテスト',
+      );
+      await userEvent.type(
+        canvas.getByLabelText('説明'),
+        'これはサブタスクのテストです',
+      );
+    });
+
+    await step('フォームを送信', async () => {
+      await userEvent.click(canvas.getByRole('button', { name: '作成' }));
+    });
+
+    await step('モーダルが閉じることを確認', async () => {
+      await waitFor(() => {
+        expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
+      });
+    });
+  },
+};
+
+export const SubTaskError: Story = {
+  args: {
+    defaultOpen: true,
+    parentId: 'subtask-1-1',
+    triggerComponent: (
+      <Button variant="ghost" size="sm">
+        サブタスク追加
+      </Button>
+    ),
+  },
+  parameters: {
+    msw: {
+      handlers: [handlers.subTaskError],
+    },
   },
 };
 

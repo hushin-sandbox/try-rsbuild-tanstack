@@ -102,6 +102,33 @@ export const TaskMethods = {
     }
     return new Date(task.dueDate) < new Date();
   },
+
+  // サブタスクを取得
+  getSubtasks(tasks: Task[], parentId: string): Task[] {
+    return tasks.filter((task) => task.parentId === parentId);
+  },
+
+  // サブタスクを再帰的に取得
+  getAllSubtasks(tasks: Task[], parentId: string): Task[] {
+    const directSubtasks = this.getSubtasks(tasks, parentId);
+    const allSubtasks = [...directSubtasks];
+
+    for (const subtask of directSubtasks) {
+      const nestedSubtasks = this.getAllSubtasks(tasks, subtask.id);
+      allSubtasks.push(...nestedSubtasks);
+    }
+
+    return allSubtasks;
+  },
+
+  // サブタスク作成時のバリデーション
+  validateSubtaskCreation(parentTask: Task): void {
+    if (parentTask.parentId) {
+      throw new TaskValidationError(
+        'サブタスクの下にサブタスクは作成できません',
+      );
+    }
+  },
 };
 
 // Custom Error

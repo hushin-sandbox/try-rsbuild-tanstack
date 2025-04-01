@@ -3,7 +3,8 @@ import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as stories from './task-create-modal.stories';
 
-const { Default, Opened, ErrorCase } = composeStories(stories);
+const { Default, Opened, ErrorCase, CreateSubTask, SubTaskError } =
+  composeStories(stories);
 
 describe('TaskCreateModal', () => {
   test('モーダルの開閉ができる', async () => {
@@ -24,9 +25,7 @@ describe('TaskCreateModal', () => {
     // モーダルを閉じる（キャンセルボタン）
     await user.click(screen.getByRole('button', { name: 'キャンセル' }));
     await waitFor(() => {
-      expect(
-        screen.queryByRole('heading', { name: '新規タスク作成' }),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
   });
 
@@ -48,9 +47,7 @@ describe('TaskCreateModal', () => {
 
     // モーダルが閉じることを確認
     await waitFor(() => {
-      expect(
-        screen.queryByRole('heading', { name: '新規タスク作成' }),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
   });
 
@@ -73,9 +70,7 @@ describe('TaskCreateModal', () => {
 
     // エラー時はモーダルが閉じないことを確認
     await waitFor(() => {
-      expect(
-        screen.getByRole('heading', { name: '新規タスク作成' }),
-      ).toBeInTheDocument();
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
     });
   });
 });

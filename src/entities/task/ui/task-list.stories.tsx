@@ -17,6 +17,14 @@ export const Default: Story = {
   },
 };
 
+export const WithSubtasks: Story = {
+  parameters: {
+    msw: {
+      handlers: [handlers.withSubtasks],
+    },
+  },
+};
+
 export const Loading: Story = {
   parameters: {
     msw: {

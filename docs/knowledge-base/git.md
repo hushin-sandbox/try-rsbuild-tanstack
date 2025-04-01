@@ -15,12 +15,12 @@ git コミットとプルリクエストの作成に関するベストプラク�
 #### 実行
 
 
-```bash
+```fish
 # 関連ファイルのみをステージング
 git add <files>
 
 # コミット例
-git commit -m "$(cat <<'EOF'
+git commit -m "(cat <<'EOF'
 <type>(<scope>): <適切なメッセージ>
 
 - <詳細な変更内容>
@@ -34,7 +34,7 @@ EOF
 
 #### ブランチの状態確認
 
-```
+```bash
 # 未コミットの変更確認
 git status
 
@@ -48,9 +48,9 @@ GIT_PAGER=cat git log main..HEAD
 #### 実行コマンド
 `gh pr` コマンドを使って作成する
 
-```bash
+```fish
 # プルリクエストの作成例（HEREDOCを使用）
-gh pr create --title "簡潔なタイトル" --body "$(cat <<'EOF'
+gh pr create --title "簡潔なタイトル" --body "(cat <<'EOF'
 ## 概要
 
 ...

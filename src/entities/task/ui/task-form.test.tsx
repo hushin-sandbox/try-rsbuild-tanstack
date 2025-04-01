@@ -32,15 +32,19 @@ describe('TaskForm', () => {
   });
 
   test('バリデーションエラーの表示', async () => {
-    render(<TaskForm onSubmit={vi.fn()} />);
     const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(<TaskForm onSubmit={onSubmit} />);
 
     // 空のフォームを送信
     const submitButton = screen.getByRole('button', { name: '作成' });
     await user.click(submitButton);
 
-    // エラーメッセージの確認
-    expect(screen.getByText('タイトルは必須です')).toBeInTheDocument();
+    expect(await screen.findByText('タイトルは必須です')).toBeInTheDocument();
+
+    // onSubmitは呼ばれないことを確認
+    expect(onSubmit).not.toHaveBeenCalled();
   });
 
   test('フォームの送信', async () => {

@@ -47,16 +47,34 @@ export const handlers = {
 - コンポーネントの主要なユースケースごとにストーリーを作成する
 - ハンドラーは MSW のパラメーターとして設定する
 
-```typescript
-// src/entities/task/ui/task-list.stories.tsx
-export const Default: Story = {
+#### Storybook 例
+
+```tsx
+import type { Meta, StoryObj } from '@storybook/react';
+import { Component } from './Component';
+import { handlers } from './component.mocks';
+
+const meta = {
+  // title 不要
+  component: Component,
   parameters: {
     msw: {
       handlers: [handlers.default],
     },
   },
+} satisfies Meta<typeof Component>;
+
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+// 基本的な状態
+export const Default: Story = {
+  args: {
+    // コンポーネントの props
+  },
 };
 
+// ローディング状態
 export const Loading: Story = {
   parameters: {
     msw: {
@@ -64,7 +82,26 @@ export const Loading: Story = {
     },
   },
 };
+
+// エラー状態
+export const Error: Story = {
+  parameters: {
+    msw: {
+      handlers: [handlers.error],
+    },
+  },
+};
+
+// データが空の状態など、ユースケース別に追加
+export const Empty: Story = {
+  parameters: {
+    msw: {
+      handlers: [handlers.empty],
+    },
+  },
+};
 ```
+
 
 ### ディレクトリ構造
 
@@ -83,7 +120,3 @@ src/
             └── task-list.stories.tsx # Storybook
 ```
 
-### テストでのモックの使用
-
-- テストではStorybookを再利用する
-  - composeStories を利用して `<StoryName>.run()` でモックが適用される
