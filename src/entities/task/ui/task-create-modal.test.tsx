@@ -3,8 +3,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as stories from './task-create-modal.stories';
 
-const { Default, Opened, ErrorCase, CreateSubTask, SubTaskError } =
-  composeStories(stories);
+const { Default, Opened, ErrorCase } = composeStories(stories);
 
 describe('TaskCreateModal', () => {
   test('モーダルの開閉ができる', async () => {
