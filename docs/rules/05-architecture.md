@@ -9,6 +9,7 @@ Single-page application
 - **フォーム**: TanStack Form
 - **バリデーション**: Valibot
 - **UIコンポーネント**: shadcn/ui + Tailwind CSS
+  - `pnpm dlx shadcn@latest add <component-name>` 
 - **ルーティング**: TanStack Router
 - **APIモック**: MSW (Mock Service Worker)
 - **テスト**: Vitest + Testing Library
