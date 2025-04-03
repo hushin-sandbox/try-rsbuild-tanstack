@@ -1,9 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react';
+
+import { withDummyRouter } from '~/shared/lib/withDummyRouter';
 import { TaskList } from './task-list';
 import { handlers } from './task-list.mocks';
 
 const meta = {
   component: TaskList,
+  decorators: [withDummyRouter('/')],
 } satisfies Meta<typeof TaskList>;
 
 export default meta;
