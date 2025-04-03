@@ -7,6 +7,12 @@ export type TasksResponse = {
 
 export type TaskResponse = Task;
 
+export type TaskDetailResponse = {
+  task: Task;
+  subtasks: Task[];
+  parentTask: Task | null;
+};
+
 // エラーレスポンス
 export interface APIErrorResponse {
   message: string;

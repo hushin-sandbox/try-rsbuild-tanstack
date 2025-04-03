@@ -70,7 +70,11 @@ describe('Task API Handlers', () => {
 
       expect(response.ok).toBe(true);
       expect(response.status).toBe(200);
-      expect(result).toEqual(task);
+      expect(result).toEqual({
+        task,
+        subtasks: [],
+        parentTask: null,
+      });
     });
 
     it('存在しないタスクの場合404を返すこと', async () => {

@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Badge } from '~/shared/ui/badge';
 import { Button } from '~/shared/ui/button';
@@ -48,7 +49,13 @@ function TaskItem({ task, tasks }: { task: Task; tasks: Task[] }) {
                 {isExpanded ? '▼' : '▶'}
               </Button>
             )}
-            <h3 className="font-semibold">{task.title}</h3>
+            <Link
+              to="/tasks/$taskId"
+              params={{ taskId: task.id }}
+              className="hover:underline"
+            >
+              <h3 className="font-semibold">{task.title}</h3>
+            </Link>
           </div>
           <div className="flex items-center gap-2">
             <StatusBadge status={task.status} />
@@ -119,7 +126,6 @@ function PriorityBadge({ priority }: { priority: Task['priority'] }) {
   return <Badge variant={variant[priority]}>{labels[priority]}</Badge>;
 }
 
-// 長いテキストを省略する関数
 function SubtaskList({
   subtasks,
   tasks,

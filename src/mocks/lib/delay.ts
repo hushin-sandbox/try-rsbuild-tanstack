@@ -1,9 +1,8 @@
-import { delay } from 'msw';
+import { delay as mswDelay } from 'msw';
 
-export function customDelay(duration: Parameters<typeof delay>[0]) {
+export const delay = (duration: number | 'infinite' = 1000) => {
   if (import.meta.env.MODE === 'test' && duration !== 'infinite') {
-    return delay(0);
+    return mswDelay(0);
   }
-
-  return delay(duration);
-}
+  return mswDelay(duration);
+};

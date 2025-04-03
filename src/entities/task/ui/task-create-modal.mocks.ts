@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 import { createErrorHandlerPost } from '~/mocks/handlers/common';
-import { customDelay } from '~/mocks/lib/delay';
+import { delay } from '~/mocks/lib/delay';
 import type { Task } from '../model/task';
 
 const API_PATH = '/api/tasks';
@@ -8,7 +8,7 @@ const API_PATH = '/api/tasks';
 export const handlers = {
   // 正常系
   default: http.post(API_PATH, async () => {
-    await customDelay(1000);
+    await delay(1000);
     return HttpResponse.json({}, { status: 201 });
   }),
 
@@ -17,7 +17,7 @@ export const handlers = {
 
   // サブタスクが作成できない場合（親タスクがサブタスクの場合）
   subTaskError: http.post(API_PATH, async () => {
-    await customDelay(500);
+    await delay(500);
     return HttpResponse.json(
       {
         error: 'ValidationError',
@@ -29,7 +29,7 @@ export const handlers = {
 
   // サブタスク作成の正常系
   createSubTask: http.post(API_PATH, async ({ request }) => {
-    await customDelay(500);
+    await delay(500);
     const data = (await request.json()) as Partial<Task>;
     return HttpResponse.json(
       {
