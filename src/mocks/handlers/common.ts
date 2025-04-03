@@ -1,5 +1,5 @@
 import { http, type HttpHandler, HttpResponse } from 'msw';
-import { customDelay } from '../lib/delay';
+import { delay } from '../lib/delay';
 
 // 汎用的なエラーハンドラー作成関数
 export const createErrorHandler = (
@@ -33,7 +33,7 @@ export const createLoadingHandler = (
   path: string,
 ): HttpHandler => {
   const response = async () => {
-    await customDelay('infinite');
+    await delay('infinite');
     return new HttpResponse(null, { status: 200 });
   };
 
@@ -52,7 +52,7 @@ export const createLoadingHandler = (
 // Loading状態のGETハンドラー
 export const createLoadingHandlerGet = (path: string) =>
   http.get(path, async () => {
-    await customDelay('infinite');
+    await delay('infinite');
     return new HttpResponse(null, { status: 200 });
   });
 
@@ -71,7 +71,7 @@ export const createErrorHandlerGet = (path: string, status = 500) =>
 // Loading状態のPOSTハンドラー
 export const createLoadingHandlerPost = (path: string) =>
   http.post(path, async () => {
-    await customDelay('infinite');
+    await delay('infinite');
     return new HttpResponse(null, { status: 200 });
   });
 

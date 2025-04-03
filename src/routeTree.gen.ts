@@ -10,10 +10,11 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root';
-import { Route as FormTestImport } from './routes/form-test';
-import { Route as AboutImport } from './routes/about';
-import { Route as IndexImport } from './routes/index';
+import { Route as rootRoute } from './routes/__root'
+import { Route as FormTestImport } from './routes/form-test'
+import { Route as AboutImport } from './routes/about'
+import { Route as IndexImport } from './routes/index'
+import { Route as TasksTaskIdImport } from './routes/tasks/$taskId'
 
 // Create/Update Routes
 
@@ -21,93 +22,111 @@ const FormTestRoute = FormTestImport.update({
   id: '/form-test',
   path: '/form-test',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const AboutRoute = AboutImport.update({
   id: '/about',
   path: '/about',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
+
+const TasksTaskIdRoute = TasksTaskIdImport.update({
+  id: '/tasks/$taskId',
+  path: '/tasks/$taskId',
+  getParentRoute: () => rootRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
-      id: '/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof IndexImport;
-      parentRoute: typeof rootRoute;
-    };
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
     '/about': {
-      id: '/about';
-      path: '/about';
-      fullPath: '/about';
-      preLoaderRoute: typeof AboutImport;
-      parentRoute: typeof rootRoute;
-    };
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutImport
+      parentRoute: typeof rootRoute
+    }
     '/form-test': {
-      id: '/form-test';
-      path: '/form-test';
-      fullPath: '/form-test';
-      preLoaderRoute: typeof FormTestImport;
-      parentRoute: typeof rootRoute;
-    };
+      id: '/form-test'
+      path: '/form-test'
+      fullPath: '/form-test'
+      preLoaderRoute: typeof FormTestImport
+      parentRoute: typeof rootRoute
+    }
+    '/tasks/$taskId': {
+      id: '/tasks/$taskId'
+      path: '/tasks/$taskId'
+      fullPath: '/tasks/$taskId'
+      preLoaderRoute: typeof TasksTaskIdImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute;
-  '/about': typeof AboutRoute;
-  '/form-test': typeof FormTestRoute;
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/form-test': typeof FormTestRoute
+  '/tasks/$taskId': typeof TasksTaskIdRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute;
-  '/about': typeof AboutRoute;
-  '/form-test': typeof FormTestRoute;
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/form-test': typeof FormTestRoute
+  '/tasks/$taskId': typeof TasksTaskIdRoute
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute;
-  '/': typeof IndexRoute;
-  '/about': typeof AboutRoute;
-  '/form-test': typeof FormTestRoute;
+  __root__: typeof rootRoute
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/form-test': typeof FormTestRoute
+  '/tasks/$taskId': typeof TasksTaskIdRoute
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/about' | '/form-test';
-  fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/about' | '/form-test';
-  id: '__root__' | '/' | '/about' | '/form-test';
-  fileRoutesById: FileRoutesById;
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths: '/' | '/about' | '/form-test' | '/tasks/$taskId'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/' | '/about' | '/form-test' | '/tasks/$taskId'
+  id: '__root__' | '/' | '/about' | '/form-test' | '/tasks/$taskId'
+  fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  AboutRoute: typeof AboutRoute;
-  FormTestRoute: typeof FormTestRoute;
+  IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  FormTestRoute: typeof FormTestRoute
+  TasksTaskIdRoute: typeof TasksTaskIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   FormTestRoute: FormTestRoute,
-};
+  TasksTaskIdRoute: TasksTaskIdRoute,
+}
 
 export const routeTree = rootRoute
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
 
 /* ROUTE_MANIFEST_START
 {
@@ -117,7 +136,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
-        "/form-test"
+        "/form-test",
+        "/tasks/$taskId"
       ]
     },
     "/": {
@@ -128,6 +148,9 @@ export const routeTree = rootRoute
     },
     "/form-test": {
       "filePath": "form-test.tsx"
+    },
+    "/tasks/$taskId": {
+      "filePath": "tasks/$taskId.tsx"
     }
   }
 }
