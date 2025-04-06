@@ -11,7 +11,8 @@
     "prefix": ""
   },
   "aliases": {
-    "components": "~/shared/components",
+    "comments": "↓ 本当は ~/shared/components だが、cn の import がうまくいかない。 先頭を @ にするとなぜか成功する",
+    "components": "@/shared/components",
     "utils": "~/shared/lib/utils",
     "ui": "~/shared/ui",
     "lib": "~/shared/lib",
