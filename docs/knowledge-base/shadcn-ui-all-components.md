@@ -14,7 +14,7 @@ Powerful table and datagrids built using TanStack Table.
 
 ### Installation
 ```bash
-npx shadcn@latest add table
+pnpm dlx shadcn@latest add table
 ```
 
 ---
@@ -26,7 +26,7 @@ A set of layered sections of content—known as tab panels—that are displayed 
 
 ### Installation
 ```bash
-npx shadcn@latest add tabs
+pnpm dlx shadcn@latest add tabs
 ```
 
 ### Usage
@@ -50,7 +50,7 @@ A modal dialog that interrupts the user with important content and expects a res
 
 ### Installation
 ```bash
-npx shadcn@latest add alert-dialog
+pnpm dlx shadcn@latest add alert-dialog
 ```
 
 ### Usage
@@ -82,7 +82,7 @@ A date field component that allows users to enter and edit date.
 
 ### Installation
 ```bash
-npx shadcn@latest add calendar
+pnpm dlx shadcn@latest add calendar
 ```
 
 ### Usage
@@ -108,7 +108,7 @@ An interactive component which expands/collapses a panel.
 
 ### Installation
 ```bash
-npx shadcn@latest add collapsible
+pnpm dlx shadcn@latest add collapsible
 ```
 
 ### Usage
@@ -131,7 +131,7 @@ Displays a form textarea or a component that looks like a textarea.
 
 ### Installation
 ```bash
-npx shadcn@latest add textarea
+pnpm dlx shadcn@latest add textarea
 ```
 
 ### Usage
@@ -148,7 +148,7 @@ Displays content within a desired ratio.
 
 ### Installation
 ```bash
-npx shadcn@latest add aspect-ratio
+pnpm dlx shadcn@latest add aspect-ratio
 ```
 
 ### Usage
@@ -169,7 +169,7 @@ Building forms with React Hook Form and Zod.
 
 ### Installation
 ```bash
-npx shadcn@latest add form
+pnpm dlx shadcn@latest add form
 ```
 
 ---
@@ -181,7 +181,7 @@ Displays a callout for user attention.
 
 ### Installation
 ```bash
-npx shadcn@latest add alert
+pnpm dlx shadcn@latest add alert
 ```
 
 ### Usage
@@ -204,7 +204,7 @@ For sighted users to preview content available behind a link.
 
 ### Installation
 ```bash
-npx shadcn@latest add hover-card
+pnpm dlx shadcn@latest add hover-card
 ```
 
 ### Usage
@@ -226,7 +226,7 @@ A two-state button that can be either on or off.
 
 ### Installation
 ```bash
-npx shadcn@latest add toggle
+pnpm dlx shadcn@latest add toggle
 ```
 
 ### Usage
@@ -243,7 +243,7 @@ Displays rich content in a portal, triggered by a button.
 
 ### Installation
 ```bash
-npx shadcn@latest add popover
+pnpm dlx shadcn@latest add popover
 ```
 
 ### Usage
@@ -263,7 +263,7 @@ A set of two-state buttons that can be toggled on or off.
 
 ### Installation
 ```bash
-npx shadcn@latest add toggle-group
+pnpm dlx shadcn@latest add toggle-group
 ```
 
 ### Usage
@@ -284,7 +284,7 @@ Displays a form input field or a component that looks like an input field.
 
 ### Installation
 ```bash
-npx shadcn@latest add input
+pnpm dlx shadcn@latest add input
 ```
 
 ### Usage
@@ -301,7 +301,7 @@ Displays a menu to the user — such as a set of actions or functions — trigge
 
 ### Installation
 ```bash
-npx shadcn@latest add dropdown-menu
+pnpm dlx shadcn@latest add dropdown-menu
 ```
 
 ### Usage
@@ -328,7 +328,7 @@ Extends the Dialog component to display content that complements the main conten
 
 ### Installation
 ```bash
-npx shadcn@latest add sheet
+pnpm dlx shadcn@latest add sheet
 ```
 
 ### Usage
@@ -356,7 +356,7 @@ Augments native scroll functionality for custom, cross-browser styling.
 
 ### Installation
 ```bash
-npx shadcn@latest add scroll-area
+pnpm dlx shadcn@latest add scroll-area
 ```
 
 ### Usage
@@ -380,7 +380,7 @@ Displays a menu to the user — such as a set of actions or functions — trigge
 
 ### Installation
 ```bash
-npx shadcn@latest add context-menu
+pnpm dlx shadcn@latest add context-menu
 ```
 
 ### Usage
@@ -412,7 +412,7 @@ Displays an indicator showing the completion progress of a task, typically displ
 
 ### Installation
 ```bash
-npx shadcn@latest add progress
+pnpm dlx shadcn@latest add progress
 ```
 
 ### Usage
@@ -429,7 +429,7 @@ A succinct message that is displayed temporarily.
 
 ### Installation
 ```bash
-npx shadcn@latest add toast
+pnpm dlx shadcn@latest add toast
 ```
 
 ---
@@ -441,7 +441,7 @@ Visually or semantically separates content.
 
 ### Installation
 ```bash
-npx shadcn@latest add separator
+pnpm dlx shadcn@latest add separator
 ```
 
 ### Usage
@@ -458,7 +458,7 @@ An opinionated toast component for React.
 
 ### Installation
 ```bash
-npx shadcn@latest add sonner
+pnpm dlx shadcn@latest add sonner
 ```
 
 ### Usage
@@ -475,7 +475,7 @@ Displays a card with header, content, and footer.
 
 ### Installation
 ```bash
-npx shadcn@latest add card
+pnpm dlx shadcn@latest add card
 ```
 
 ### Usage
@@ -503,7 +503,7 @@ A carousel with motion and swipe built using Embla.
 
 ### Installation
 ```bash
-npx shadcn@latest add carousel
+pnpm dlx shadcn@latest add carousel
 ```
 
 ### Usage
@@ -528,7 +528,7 @@ A collection of links for navigating websites.
 
 ### Installation
 ```bash
-npx shadcn@latest add navigation-menu
+pnpm dlx shadcn@latest add navigation-menu
 ```
 
 ### Usage
@@ -554,7 +554,7 @@ A set of checkable buttons—known as radio buttons—where no more than one of 
 
 ### Installation
 ```bash
-npx shadcn@latest add radio-group
+pnpm dlx shadcn@latest add radio-group
 ```
 
 ### Usage
@@ -580,7 +580,7 @@ A control that allows the user to toggle between checked and not checked.
 
 ### Installation
 ```bash
-npx shadcn@latest add switch
+pnpm dlx shadcn@latest add switch
 ```
 
 ### Usage
@@ -597,7 +597,7 @@ A visually persistent menu common in desktop applications that provides quick ac
 
 ### Installation
 ```bash
-npx shadcn@latest add menubar
+pnpm dlx shadcn@latest add menubar
 ```
 
 ### Usage
@@ -628,7 +628,7 @@ An image element with a fallback for representing the user.
 
 ### Installation
 ```bash
-npx shadcn@latest add avatar
+pnpm dlx shadcn@latest add avatar
 ```
 
 ### Usage
@@ -648,7 +648,7 @@ Displays the path to the current resource using a hierarchy of links.
 
 ### Installation
 ```bash
-npx shadcn@latest add breadcrumb
+pnpm dlx shadcn@latest add breadcrumb
 ```
 
 ### Usage
@@ -679,7 +679,7 @@ Renders an accessible label associated with controls.
 
 ### Installation
 ```bash
-npx shadcn@latest add label
+pnpm dlx shadcn@latest add label
 ```
 
 ### Usage
@@ -696,7 +696,7 @@ A popup that displays information related to an element when the element receive
 
 ### Installation
 ```bash
-npx shadcn@latest add tooltip
+pnpm dlx shadcn@latest add tooltip
 ```
 
 ### Usage
@@ -720,7 +720,7 @@ A composable, themeable and customizable sidebar component.
 
 ### Installation
 ```bash
-npx shadcn@latest add sidebar
+pnpm dlx shadcn@latest add sidebar
 ```
 
 ### Usage
@@ -757,7 +757,7 @@ A responsive table component.
 
 ### Installation
 ```bash
-npx shadcn@latest add table
+pnpm dlx shadcn@latest add table
 ```
 
 ### Usage
@@ -792,7 +792,7 @@ A window overlaid on either the primary window or another dialog window, renderi
 
 ### Installation
 ```bash
-npx shadcn@latest add dialog
+pnpm dlx shadcn@latest add dialog
 ```
 
 ### Usage
@@ -820,7 +820,7 @@ Displays a button or a component that looks like a button.
 
 ### Installation
 ```bash
-npx shadcn@latest add button
+pnpm dlx shadcn@latest add button
 ```
 
 ### Usage
@@ -837,7 +837,7 @@ Fast, composable, unstyled command menu for React.
 
 ### Installation
 ```bash
-npx shadcn@latest add command
+pnpm dlx shadcn@latest add command
 ```
 
 ### Usage
@@ -870,7 +870,7 @@ Pagination with page navigation, next and previous links.
 
 ### Installation
 ```bash
-npx shadcn@latest add pagination
+pnpm dlx shadcn@latest add pagination
 ```
 
 ### Usage
@@ -902,7 +902,7 @@ A vertically stacked set of interactive headings that each reveal a section of c
 
 ### Installation
 ```bash
-npx shadcn@latest add accordion
+pnpm dlx shadcn@latest add accordion
 ```
 
 ### Usage
@@ -926,7 +926,7 @@ A drawer component for React.
 
 ### Installation
 ```bash
-npx shadcn@latest add drawer
+pnpm dlx shadcn@latest add drawer
 ```
 
 ### Usage
@@ -958,7 +958,7 @@ A control that allows the user to toggle between checked and not checked.
 
 ### Installation
 ```bash
-npx shadcn@latest add checkbox
+pnpm dlx shadcn@latest add checkbox
 ```
 
 ### Usage
@@ -975,7 +975,7 @@ Accessible one-time password component with copy paste functionality.
 
 ### Installation
 ```bash
-npx shadcn@latest add input-otp
+pnpm dlx shadcn@latest add input-otp
 ```
 
 ### Usage
@@ -1004,7 +1004,7 @@ An input where the user selects a value from within a given range.
 
 ### Installation
 ```bash
-npx shadcn@latest add slider
+pnpm dlx shadcn@latest add slider
 ```
 
 ### Usage
@@ -1021,7 +1021,7 @@ Beautiful charts. Built using Recharts. Copy and paste into your apps.
 
 ### Installation
 ```bash
-npx shadcn@latest add chart
+pnpm dlx shadcn@latest add chart
 ```
 
 ---
@@ -1033,7 +1033,7 @@ Displays a list of options for the user to pick from—triggered by a button.
 
 ### Installation
 ```bash
-npx shadcn@latest add select
+pnpm dlx shadcn@latest add select
 ```
 
 ### Usage
@@ -1059,7 +1059,7 @@ Use to show a placeholder while content is loading.
 
 ### Installation
 ```bash
-npx shadcn@latest add skeleton
+pnpm dlx shadcn@latest add skeleton
 ```
 
 ### Usage
@@ -1083,7 +1083,7 @@ Accessible resizable panel groups and layouts with keyboard support.
 
 ### Installation
 ```bash
-npx shadcn@latest add resizable
+pnpm dlx shadcn@latest add resizable
 ```
 
 ### Usage
@@ -1104,7 +1104,7 @@ Displays a badge or a component that looks like a badge.
 
 ### Installation
 ```bash
-npx shadcn@latest add badge
+pnpm dlx shadcn@latest add badge
 ```
 
 ### Usage
